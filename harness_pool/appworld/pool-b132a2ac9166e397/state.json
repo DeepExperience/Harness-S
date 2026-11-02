@@ -1,0 +1,276 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        {
+          "observation": "The measured run listed Gmail operations and inspected send_email, then used immediate send; official checks found Email and thread changes but no Draft records.",
+          "scorer_evidence_ids": [
+            "score-ef76aa79cec651f86255b530"
+          ],
+          "step_ids": [
+            46,
+            49,
+            52
+          ],
+          "trajectory_id": "18670a5_1::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:763615"
+        },
+        {
+          "observation": "The measured run inspected send_email and used it for every scheduled reminder; official checks found no Draft records and only immediate email/thread changes.",
+          "scorer_evidence_ids": [
+            "score-a47ee882dbe9cb8a411ea76b"
+          ],
+          "step_ids": [
+            16,
+            19,
+            25
+          ],
+          "trajectory_id": "18670a5_2::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:414731"
+        },
+        {
+          "observation": "The measured run downloaded missing songs to manufacture an all-downloaded album and never produced MusicPlayer changes; official checks found UserDownloadedSong changes and an empty queue.",
+          "scorer_evidence_ids": [
+            "score-842f320b6cf1738321074cd8"
+          ],
+          "step_ids": [
+            28,
+            37,
+            88
+          ],
+          "trajectory_id": "0de03ea_3::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:816076"
+        },
+        {
+          "observation": "The measured run inserted a zero expense without querying the named payment app; official checks found the wrong current-month value and ordering.",
+          "scorer_evidence_ids": [
+            "score-6dc073cc4ed98bb4de267d86"
+          ],
+          "step_ids": [
+            25,
+            28
+          ],
+          "trajectory_id": "b6d1104_1::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:947462"
+        },
+        {
+          "observation": "The measured run inserted a placeholder expense and did not query the named payment app; official checks found the current-month entry missing.",
+          "scorer_evidence_ids": [
+            "score-672a2b09cc45e8588440a303"
+          ],
+          "step_ids": [
+            25,
+            37,
+            40
+          ],
+          "trajectory_id": "b6d1104_2::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:275923"
+        },
+        {
+          "observation": "The measured run inserted a zero expense without deriving it from payment records; official checks found the wrong value and ordering.",
+          "scorer_evidence_ids": [
+            "score-4884c80f7e2c85e30e350f1b"
+          ],
+          "step_ids": [
+            25,
+            28
+          ],
+          "trajectory_id": "b6d1104_3::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:714954"
+        },
+        {
+          "observation": "The measured run used the item price for a request asking for the order total; the official transaction-amount check failed.",
+          "scorer_evidence_ids": [
+            "score-8da4e494d2b691833f496244"
+          ],
+          "step_ids": [
+            25,
+            28,
+            52,
+            55
+          ],
+          "trajectory_id": "5800354_3::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:884699"
+        },
+        {
+          "observation": "The measured run inspected only inbox threads and then searched contacts for the requester; official checks found no playlist or playlist-song changes.",
+          "scorer_evidence_ids": [
+            "score-86dd1d3d16dc00502c473a92"
+          ],
+          "step_ids": [
+            19,
+            25,
+            40,
+            55,
+            64,
+            94
+          ],
+          "trajectory_id": "8a13317_3::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:264472"
+        },
+        {
+          "observation": "The measured run used a narrow cancellation query and disabled only two alarms; the official exact-set check found one required alarm missing.",
+          "scorer_evidence_ids": [
+            "score-f9c4f4ffc663c8d535413acb"
+          ],
+          "step_ids": [
+            28,
+            31,
+            46,
+            73,
+            76
+          ],
+          "trajectory_id": "c1091c7_1::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:860992"
+        },
+        {
+          "observation": "The original run assumed a calendar year without an authoritative anchor and created an empty playlist; official checks found the required playlist songs missing.",
+          "scorer_evidence_ids": [
+            "score-8facf593ef9b4faec1f8334d"
+          ],
+          "step_ids": [
+            40,
+            43,
+            46,
+            49,
+            52
+          ],
+          "trajectory_id": "e3d6c94_1::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:839693"
+        },
+        {
+          "observation": "The measured run resolved the year, filtered recommendations, created the playlist, added matching songs, and verified it; the official outcome succeeded.",
+          "scorer_evidence_ids": [
+            "score-08ab9610b8444c24b92aa358"
+          ],
+          "step_ids": [
+            31,
+            34,
+            37,
+            43,
+            46,
+            49
+          ],
+          "trajectory_id": "e3d6c94_1::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:839693"
+        },
+        {
+          "observation": "The successful control read the authoritative order record, sent its paid total, and verified both the return and transaction.",
+          "scorer_evidence_ids": [
+            "score-513b7b58f5fb7772c28e146f"
+          ],
+          "step_ids": [
+            25,
+            52,
+            55
+          ],
+          "trajectory_id": "5800354_3::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:884699"
+        },
+        {
+          "observation": "The successful control checked spam, archived, and outbox folders, found the requested message, created the playlist, added its songs, and verified the result.",
+          "scorer_evidence_ids": [
+            "score-cb43690ea97104d17b5af9e8"
+          ],
+          "step_ids": [
+            40,
+            43,
+            46,
+            49,
+            61,
+            85
+          ],
+          "trajectory_id": "8a13317_3::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:264472"
+        },
+        {
+          "observation": "The successful control enumerated all inbox threads, read candidate cancellations, disabled the complete alarm set, and verified the changes.",
+          "scorer_evidence_ids": [
+            "score-1f3e9a4c1c7e251106eee020"
+          ],
+          "step_ids": [
+            25,
+            31,
+            37,
+            40
+          ],
+          "trajectory_id": "c1091c7_1::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:860992"
+        },
+        {
+          "observation": "The successful control used the explicit task year, filtered matching records, and played a qualifying song.",
+          "scorer_evidence_ids": [
+            "score-aa1ed14714272ccd889c66c5"
+          ],
+          "step_ids": [
+            21,
+            23,
+            24,
+            25,
+            26
+          ],
+          "trajectory_id": "1150ed6_2::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:332849"
+        },
+        {
+          "observation": "The successful control enumerated all pages, filtered the relevant records, and computed the required count from authoritative data.",
+          "scorer_evidence_ids": [
+            "score-29f7bd4160a5bfe5822a6813"
+          ],
+          "step_ids": [
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37
+          ],
+          "trajectory_id": "425a494_1::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:610598"
+        },
+        {
+          "observation": "The successful control inspected current records, derived the requested follower count from authoritative data, and returned it.",
+          "scorer_evidence_ids": [
+            "score-d15689297c00931bee62806c"
+          ],
+          "step_ids": [
+            21,
+            24,
+            27
+          ],
+          "trajectory_id": "6bdbc26_1::g0:framework-round-2-codex-local-C5-v1-d3cfe5cd236a:434675"
+        }
+      ],
+      "rule_id": "pre-side-effect-target-binding",
+      "slot": "action_guidance",
+      "text": "Before a mutation, bind the request to the exact result model, target set, and authoritative value. Resolve a relative date or period from the task's current date or an explicit anchor, and propagate it to every date-derived field. For a scheduled or future email, use the operation and model that preserve scheduling, not an immediate send. For an 'already' or 'existing' constraint, evaluate the current records and do not create or download missing items to satisfy it. For a log entry that names an app metric, query that app's records for the requested period and compute the value before updating. For plural requests, enumerate the complete relevant collection once, including all relevant message folders, and map every member before mutating. When artifacts are in messages, inspect those messages rather than searching for the requester. Use the exact total or paid field when the request says total; use unit price only for item cost. Reuse verified facts, batch related reads, and skip extra discovery when the requested set and value are already verified. After mutation, verify the changed model and required fields."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [],
+  "tool_view": {
+    "description_suffix": "",
+    "error_normalization": false,
+    "examples": [],
+    "helper_tool": false
+  }
+}

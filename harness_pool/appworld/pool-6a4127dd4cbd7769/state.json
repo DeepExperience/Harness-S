@@ -1,0 +1,188 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [
+    {
+      "action": "warn",
+      "condition": "pagination_present",
+      "event": "after_tool",
+      "id": "pagination-cursor-continue",
+      "message": "A pagination signal is present. Continue the documented traversal to a short or empty page before treating the collection as complete; do not repeat the same page.",
+      "parameters": {}
+    }
+  ],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        {
+          "observation": "Detailed documentation exposed optional repeat_days and the flight date was known, but create_alarm omitted repeat_days.",
+          "scorer_evidence_ids": [
+            "score-8418f9f0080d4790c9ad7020"
+          ],
+          "step_ids": [
+            11,
+            12,
+            83,
+            84,
+            85,
+            86
+          ],
+          "trajectory_id": "321ec38_1::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:229907"
+        },
+        {
+          "observation": "Six units were ordered, but gift wrapping omitted the quantity and the resulting order had gift_wrap_quantity 1.",
+          "scorer_evidence_ids": [
+            "score-3d966946914cd2d587aba2fb"
+          ],
+          "step_ids": [
+            37,
+            38,
+            40,
+            41,
+            68
+          ],
+          "trajectory_id": "ec655df_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:368255"
+        },
+        {
+          "observation": "The exact recipient email was known, but repeated unsupported search_term calls returned unrelated users and no transaction was created.",
+          "scorer_evidence_ids": [
+            "score-c581e6f3eccb3ca3a7bdf3c8",
+            "score-025e01a70e027d13a4512f6d"
+          ],
+          "step_ids": [
+            41,
+            66,
+            68,
+            69,
+            71,
+            75,
+            77,
+            87,
+            89
+          ],
+          "trajectory_id": "82d2e01_1::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:59869"
+        },
+        {
+          "observation": "create_draft required recipient and attachment fields, but repeated unsupported search_term calls returned unrelated contacts and no draft was created.",
+          "scorer_evidence_ids": [
+            "score-773bd64858f1c98b4339eba0",
+            "score-6f710641183a1efcc8e9bd1e"
+          ],
+          "step_ids": [
+            35,
+            42,
+            44,
+            45,
+            47,
+            54,
+            56,
+            57,
+            59
+          ],
+          "trajectory_id": "ffea2b5_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:166042"
+        }
+      ],
+      "rule_id": "api-contract-checkpoint",
+      "slot": "action_guidance",
+      "text": "When preparing a side-effect call, use the endpoint schema already available to map required semantics to optional fields, including counts, dates, repeat schedules, recipient identifiers, and attachment paths. If the destination API accepts an exact identifier that is already known, pass it directly instead of searching another app. Reuse the stored access-token and password variables; do not reopen documentation or search when the needed fields are resolved."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [
+    {
+      "body": "Procedure:\n\n1. Identify every source needed to derive the operative target set. Read the relevant API documentation and use its parameters exactly; do not invent query fields or treat a response-schema example as runtime data.\n2. For a collection source, inspect the documented pagination contract before selecting records. If a cursor, page index, or equivalent is documented, traverse the collection until a page is shorter than the documented page size or empty. Batch the bounded traversal loop with related reads inside one environment execute call, preserve page state, and do not repeat a page.\n3. Treat each task-critical identifier, amount, code, path, recipient, or other value as unresolved until it is observed in the field of a named source object or a directly relevant authoritative response. If a lookup fails, correct the call from its schema and retry; never substitute a guess, placeholder, example value, or superficially related item.\n4. Extract every predicate, relationship, exception, and boundary condition from the request and source observations. Represent candidate sets explicitly and intersect all required conditions before any side effect. Deduplicate stable identifiers when combining sources.\n5. Verify that the final target set contains exactly the items justified by the complete evidence, perform the requested operation on that set, and verify the resulting state when a documented read is available. Stop once the requested outcome is verified; do not explore unrelated sources or paginate a collection that is already complete.",
+      "description": "Derive complete, source-backed target sets before side effects or answers.",
+      "evidence": [
+        {
+          "observation": "Only first pages were retrieved, manual inspection consumed the budget, and the required answer was never submitted.",
+          "scorer_evidence_ids": [
+            "score-0a8d0608401d0683aafb7363",
+            "score-a3b90c0a4ba61d7b2ffe15fa",
+            "score-3cfe02edcb4f5c9dcf896b7d",
+            "score-ecad67247550968e9402a3e3",
+            "score-394e4288b0d76de0e85aade0"
+          ],
+          "step_ids": [
+            15,
+            18,
+            21,
+            27,
+            45,
+            75,
+            93
+          ],
+          "trajectory_id": "d37c235_2::g0:framework-validation-rollouts-probe-20-parent-0-7478c3d011e2:514634"
+        },
+        {
+          "observation": "An unspecified expense amount was replaced with a placeholder instead of being computed from the named transaction source.",
+          "scorer_evidence_ids": [
+            "score-34e38fc0ffb501df2eb3e4fc",
+            "score-16f13d32a3f6d7232fbdb7b1",
+            "score-e8cf8434a3ecc07f45045424"
+          ],
+          "step_ids": [
+            30,
+            31,
+            33,
+            36,
+            37,
+            38,
+            41,
+            42
+          ],
+          "trajectory_id": "b6d1104_2::g0:framework-validation-rollouts-probe-20-parent-0-7478c3d011e2:275923"
+        },
+        {
+          "observation": "A date-filtered transaction set was mutated without intersecting the required relationship condition, producing many extra side effects.",
+          "scorer_evidence_ids": [
+            "score-6bbfdc7e20651919bc355cf0",
+            "score-433a909daf4e20fb1b19b0a5",
+            "score-7403d63e686cb023494a1ac2",
+            "score-509a69896982232a29fe2ee0"
+          ],
+          "step_ids": [
+            51,
+            53,
+            56,
+            60,
+            62,
+            63,
+            65
+          ],
+          "trajectory_id": "afc0fce_1::g0:framework-validation-rollouts-probe-20-parent-0-7478c3d011e2:385171"
+        }
+      ],
+      "name": "source-complete-target-set",
+      "when_to_use": "Use when a task requires all items from one or more collections, an unresolved task-critical value, or selection under multiple predicates, relationships, or exceptions. Do not use it when every required identifier and field is already resolved."
+    }
+  ],
+  "tool_view": {
+    "description_suffix": "",
+    "error_normalization": false,
+    "examples": [
+      "When a documented collection endpoint returns a page, inspect its pagination contract. If a next-page cursor or documented page index exists, batch a bounded loop in one execute call until a page is shorter than the documented page size or empty. A short first page is already complete; do not fetch duplicate pages."
+    ],
+    "helper_tool": false
+  }
+}

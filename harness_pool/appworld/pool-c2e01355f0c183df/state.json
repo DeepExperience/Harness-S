@@ -1,0 +1,58 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        "3ab5b8b_1::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:131061",
+        "9016950_3::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:318720",
+        "7d7fbf6_2::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:657498",
+        "9871968_1::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:584925",
+        "9871968_3::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:782288",
+        "bcb9696_3::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:305310",
+        "ce73d68_1::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:397710",
+        "a132254_2::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:851743",
+        "f99d726_3::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:308842",
+        "18670a5_1::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:763615"
+      ],
+      "rule_id": "reconcile-before-side-effect",
+      "slot": "action_guidance",
+      "text": "Before a bulk, destructive, or irreversible action, resolve the exact target set from authoritative reads. If the request combines conditions, fetch each condition separately and compute the intersection; do not broaden an item to its containing collection. If it references a source collection or lifecycle object, inspect the source-specific API, reconcile current mutable state, and choose the operation that moves, updates, or consumes the exact object. Before checkout, show the cart, remove or clear unrelated pre-existing items, add only requested products and quantities, re-read the cart, and verify payment and delivery constraints. For a scheduled or future communication, inspect the relevant creation API for a scheduling field and do not substitute an immediate generic send. After the side effect, verify the final source and target state. For read-only work or an already-unambiguous target, proceed without unnecessary discovery."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [],
+  "tool_view": {
+    "description_suffix": "",
+    "error_normalization": false,
+    "examples": [
+      "When a request combines conditions, fetch each authoritative set and compute the exact intersection; do not broaden one set to its container.",
+      "Before checkout, show the cart; clear or remove unrelated pre-existing items, add only requested products and quantities, re-read the cart, and use a source-specific move API when buying from a wishlist.",
+      "For an existing email, thread, or draft, inspect relation-specific reply, forward, or send-from-draft APIs; choose the one that updates or consumes the exact source object, then verify the result.",
+      "For a scheduled or future message, inspect the creation API for a scheduling field; use that lifecycle rather than an immediate generic send, then verify the resulting scheduled objects."
+    ],
+    "helper_tool": false
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [
+    {
+      "action": "warn",
+      "condition": "pagination_present",
+      "event": "after_tool",
+      "id": "bounded-list-reminder",
+      "message": "If this result is a bounded list whose completeness matters, inspect the documented page size and terminal condition; advance the page index until a short or empty page, definitive boundary, or resolved target. Ignore this reminder for direct reads and already-verified results.",
+      "parameters": {}
+    }
+  ],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        "22cc237_3::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:589161",
+        "c1091c7_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:860992",
+        "d37c235_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:514634",
+        "a5b0084_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:528984",
+        "b6d1104_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:275923",
+        "3ab5b8b_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:258576",
+        "af84964_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:620400",
+        "29caf6f_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:691297",
+        "f3f60f0_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:324769",
+        "1150ed6_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:332849",
+        "fac291d_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:999814",
+        "425a494_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:610598",
+        "09ac073_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:60667",
+        "8a13317_3::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:264472",
+        "a132254_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:851743",
+        "e7a10f8_3::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:820938",
+        "fa327a6_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:813993",
+        "6bdbc26_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:434675"
+      ],
+      "rule_id": "source-completeness-dispatch",
+      "slot": "action_guidance",
+      "text": "When an outcome depends on every member of a collection, a relationship category, a derived value, or a value not yet observed, load the source-completeness Skill before the first relevant list or source read. Derive the exact predicate and authoritative sources; inspect documented page, filter, sort, and terminal semantics; retain exact IDs and observed values; and verify the selected set before acting or answering. Never substitute a guess or placeholder for an unobserved value. Stop at a definitive short or empty page, documented boundary, or resolved target, and avoid unrelated discovery."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [
+    {
+      "body": "Purpose: establish authoritative source completeness and exact membership before filtering, joining, counting, updating, deriving a value, or causing side effects.\n\nRequired inputs:\n- The exact requested predicate, including relationship, category, date field, exception clauses, and whether boundaries are inclusive.\n- Detailed API documentation for every endpoint that can supply the predicate or value.\n- The observed current date for a relative window, obtained from the environment or a documented current-date API.\n- The page parameters, sort order, filters, and result count for each relevant list call.\n\nProcedure:\n1. Name the target set or value before fetching. Identify each authoritative source and the participant or entity field to compare. Do not replace a relationship with a superficial status, a container field with a per-entity field, or a referenced request with an unverified collection.\n2. Read detailed endpoint documentation before relying on a list result. Record default and maximum page size, page index semantics, sort order, supported filters, date field, and terminal condition. Do not treat a default or bounded page as exhaustive.\n3. For a relative date window, observe the current date explicitly. Compute both inclusive boundaries from that observation, print them, and filter on the documented date field. Never infer today or a period from the newest returned record.\n4. When exhaustive traversal is required, request the largest documented page size and batch related page reads in one execute block when practical. Continue only until an empty page, a short page at the maximum page size, a documented terminal condition, a definitive filter boundary, or the unique requested target is resolved.\n5. Preserve decision-critical identifiers and fields needed for the exact predicate. Build sets or unions explicitly. Intersect every required relationship or membership set; do not guess an entity, identifier, category, or value that was not returned. Deduplicate only when the task asks for unique members.\n6. Derive values from the authoritative per-entity fields required by the predicate. Compute once, print the inputs and result, and do not substitute a placeholder for a missing source value.\n7. Before a side effect or completion, verify the selected set against the stated predicate and boundaries. Confirm that every required source was considered and that no extra member from an unrequested relationship, category, or date was included. If evidence is incomplete, fetch the missing page, entity, or source rather than proceeding on an assumption.\n8. Stop as soon as the boundary is definitive or the unique target is resolved. Do not force additional discovery after a short page, a documented terminal condition, a definitive filter boundary, or a resolved target. Preserve successful targeted-query and direct-read procedures.\n\nCompletion check: report or act on only the exact selected set or derived value. If a required source or boundary cannot be established with available APIs, state that limitation in the task result rather than inventing completeness.",
+      "description": "Establish authoritative source boundaries, exact relationship membership, and observed values before acting on AppWorld list or derived-value results.",
+      "evidence": [
+        "22cc237_3::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:589161",
+        "c1091c7_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:860992",
+        "d37c235_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:514634",
+        "a5b0084_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:528984",
+        "b6d1104_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:275923",
+        "3ab5b8b_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:258576",
+        "af84964_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:620400",
+        "29caf6f_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:691297",
+        "f3f60f0_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:324769",
+        "1150ed6_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:332849",
+        "fac291d_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:999814",
+        "425a494_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:610598",
+        "09ac073_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:60667",
+        "8a13317_3::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:264472",
+        "a132254_2::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:851743",
+        "e7a10f8_3::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:820938",
+        "fa327a6_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:813993",
+        "6bdbc26_1::g0:framework-validation-rollouts-probe-20-parent-1-6fec28f88a77:434675"
+      ],
+      "name": "source-completeness",
+      "when_to_use": "Use when a task depends on all members, a last-N item, a relationship category, a bounded date window, an exact set intersection, or a value that must be derived from an authoritative source. Do not use after a unique target or definitive boundary is already resolved."
+    }
+  ],
+  "tool_view": {
+    "description_suffix": "For completeness-dependent list reads, inspect the documented page parameters and filters. Use the largest allowed page size, advance the documented page index, and stop only at a short or empty page, a definitive boundary, or a resolved target.",
+    "error_normalization": false,
+    "examples": [
+      "Batch related page reads in one execute block when practical: request the documented maximum page size, advance page_index for each full page, and stop at a short or empty page or a definitive boundary."
+    ],
+    "helper_tool": false
+  }
+}

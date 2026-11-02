@@ -1,0 +1,244 @@
+{"family": "024c982", "source_split": "test_normal", "tasks": {"test": ["024c982_2", "024c982_3"], "train": [], "validation": ["024c982_1"]}}
+{"family": "042a9fc", "source_split": "test_normal", "tasks": {"test": ["042a9fc_2"], "train": ["042a9fc_3"], "validation": ["042a9fc_1"]}}
+{"family": "07b42fd", "source_split": "train", "tasks": {"test": ["07b42fd_3"], "train": ["07b42fd_1"], "validation": ["07b42fd_2"]}}
+{"family": "07bb666", "source_split": "test_challenge", "tasks": {"test": ["07bb666_3"], "train": ["07bb666_1"], "validation": ["07bb666_2"]}}
+{"family": "099174d", "source_split": "test_challenge", "tasks": {"test": ["099174d_2"], "train": ["099174d_3"], "validation": ["099174d_1"]}}
+{"family": "09ac073", "source_split": "test_challenge", "tasks": {"test": [], "train": ["09ac073_1", "09ac073_2", "09ac073_3"], "validation": []}}
+{"family": "09b0ee6", "source_split": "test_normal", "tasks": {"test": ["09b0ee6_1", "09b0ee6_2"], "train": [], "validation": ["09b0ee6_3"]}}
+{"family": "0a9d82a", "source_split": "test_normal", "tasks": {"test": ["0a9d82a_2", "0a9d82a_3"], "train": [], "validation": ["0a9d82a_1"]}}
+{"family": "0d01c76", "source_split": "test_normal", "tasks": {"test": ["0d01c76_3"], "train": ["0d01c76_1"], "validation": ["0d01c76_2"]}}
+{"family": "0d22252", "source_split": "test_challenge", "tasks": {"test": ["0d22252_1"], "train": ["0d22252_2"], "validation": ["0d22252_3"]}}
+{"family": "0d8a4ee", "source_split": "dev", "tasks": {"test": ["0d8a4ee_1", "0d8a4ee_2"], "train": [], "validation": ["0d8a4ee_3"]}}
+{"family": "0de03ad", "source_split": "test_challenge", "tasks": {"test": ["0de03ad_1"], "train": ["0de03ad_2"], "validation": ["0de03ad_3"]}}
+{"family": "0de03ea", "source_split": "test_normal", "tasks": {"test": [], "train": ["0de03ea_1", "0de03ea_2", "0de03ea_3"], "validation": []}}
+{"family": "1150ed6", "source_split": "test_normal", "tasks": {"test": [], "train": ["1150ed6_1", "1150ed6_2", "1150ed6_3"], "validation": []}}
+{"family": "13547f5", "source_split": "test_normal", "tasks": {"test": ["13547f5_2"], "train": ["13547f5_3"], "validation": ["13547f5_1"]}}
+{"family": "143527e", "source_split": "test_challenge", "tasks": {"test": ["143527e_1"], "train": ["143527e_2"], "validation": ["143527e_3"]}}
+{"family": "166f4ff", "source_split": "test_normal", "tasks": {"test": [], "train": ["166f4ff_1", "166f4ff_2", "166f4ff_3"], "validation": []}}
+{"family": "16be9ce", "source_split": "test_challenge", "tasks": {"test": ["16be9ce_1"], "train": ["16be9ce_2"], "validation": ["16be9ce_3"]}}
+{"family": "18670a5", "source_split": "test_challenge", "tasks": {"test": [], "train": ["18670a5_1", "18670a5_2", "18670a5_3"], "validation": []}}
+{"family": "1a79e37", "source_split": "test_challenge", "tasks": {"test": ["1a79e37_3", "1a79e37_1"], "train": [], "validation": ["1a79e37_2"]}}
+{"family": "1b2bae9", "source_split": "test_challenge", "tasks": {"test": [], "train": ["1b2bae9_1", "1b2bae9_2", "1b2bae9_3"], "validation": []}}
+{"family": "1b988ac", "source_split": "test_challenge", "tasks": {"test": ["1b988ac_1"], "train": ["1b988ac_2"], "validation": ["1b988ac_3"]}}
+{"family": "1c4bd27", "source_split": "test_challenge", "tasks": {"test": ["1c4bd27_1"], "train": ["1c4bd27_2"], "validation": ["1c4bd27_3"]}}
+{"family": "20c1328", "source_split": "test_challenge", "tasks": {"test": ["20c1328_2"], "train": ["20c1328_3"], "validation": ["20c1328_1"]}}
+{"family": "21abae1", "source_split": "test_normal", "tasks": {"test": [], "train": ["21abae1_1", "21abae1_2", "21abae1_3"], "validation": []}}
+{"family": "229360a", "source_split": "train", "tasks": {"test": ["229360a_3"], "train": ["229360a_1"], "validation": ["229360a_2"]}}
+{"family": "22cc237", "source_split": "train", "tasks": {"test": [], "train": ["22cc237_1", "22cc237_2", "22cc237_3"], "validation": []}}
+{"family": "23cf851", "source_split": "dev", "tasks": {"test": ["23cf851_1", "23cf851_2", "23cf851_3"], "train": [], "validation": []}}
+{"family": "23d431c", "source_split": "test_challenge", "tasks": {"test": ["23d431c_3", "23d431c_1"], "train": [], "validation": ["23d431c_2"]}}
+{"family": "245cb43", "source_split": "test_challenge", "tasks": {"test": ["245cb43_2"], "train": ["245cb43_3"], "validation": ["245cb43_1"]}}
+{"family": "258796c", "source_split": "test_challenge", "tasks": {"test": ["258796c_1", "258796c_2", "258796c_3"], "train": [], "validation": []}}
+{"family": "270f1ff", "source_split": "test_normal", "tasks": {"test": [], "train": ["270f1ff_1", "270f1ff_2", "270f1ff_3"], "validation": []}}
+{"family": "277d81d", "source_split": "test_challenge", "tasks": {"test": [], "train": ["277d81d_1", "277d81d_2", "277d81d_3"], "validation": []}}
+{"family": "27e1026", "source_split": "train", "tasks": {"test": ["27e1026_2", "27e1026_3"], "train": [], "validation": ["27e1026_1"]}}
+{"family": "287e338", "source_split": "train", "tasks": {"test": ["287e338_1", "287e338_2", "287e338_3"], "train": [], "validation": []}}
+{"family": "29a7b7e", "source_split": "test_normal", "tasks": {"test": [], "train": ["29a7b7e_1", "29a7b7e_2", "29a7b7e_3"], "validation": []}}
+{"family": "29caf6f", "source_split": "train", "tasks": {"test": [], "train": ["29caf6f_1", "29caf6f_2", "29caf6f_3"], "validation": []}}
+{"family": "2a163ab", "source_split": "train", "tasks": {"test": ["2a163ab_2"], "train": ["2a163ab_3"], "validation": ["2a163ab_1"]}}
+{"family": "2c544f9", "source_split": "test_normal", "tasks": {"test": ["2c544f9_2", "2c544f9_3"], "train": [], "validation": ["2c544f9_1"]}}
+{"family": "2d9f728", "source_split": "test_normal", "tasks": {"test": ["2d9f728_3"], "train": ["2d9f728_1"], "validation": ["2d9f728_2"]}}
+{"family": "2e9b91e", "source_split": "test_challenge", "tasks": {"test": [], "train": ["2e9b91e_1", "2e9b91e_2", "2e9b91e_3"], "validation": []}}
+{"family": "2ff4dfb", "source_split": "test_challenge", "tasks": {"test": ["2ff4dfb_1", "2ff4dfb_2", "2ff4dfb_3"], "train": [], "validation": []}}
+{"family": "302c169", "source_split": "train", "tasks": {"test": ["302c169_1", "302c169_2"], "train": [], "validation": ["302c169_3"]}}
+{"family": "30e8586", "source_split": "test_challenge", "tasks": {"test": ["30e8586_1", "30e8586_2", "30e8586_3"], "train": [], "validation": []}}
+{"family": "31dc501", "source_split": "test_normal", "tasks": {"test": [], "train": ["31dc501_1", "31dc501_2", "31dc501_3"], "validation": []}}
+{"family": "321ec38", "source_split": "test_challenge", "tasks": {"test": [], "train": ["321ec38_1", "321ec38_2", "321ec38_3"], "validation": []}}
+{"family": "325d6ec", "source_split": "test_normal", "tasks": {"test": ["325d6ec_1"], "train": ["325d6ec_2"], "validation": ["325d6ec_3"]}}
+{"family": "32616b5", "source_split": "test_normal", "tasks": {"test": ["32616b5_2"], "train": ["32616b5_3"], "validation": ["32616b5_1"]}}
+{"family": "33e202d", "source_split": "test_challenge", "tasks": {"test": ["33e202d_1", "33e202d_2", "33e202d_3"], "train": [], "validation": []}}
+{"family": "34d9492", "source_split": "train", "tasks": {"test": ["34d9492_1", "34d9492_2"], "train": [], "validation": ["34d9492_3"]}}
+{"family": "3650990", "source_split": "test_challenge", "tasks": {"test": ["3650990_2", "3650990_3"], "train": [], "validation": ["3650990_1"]}}
+{"family": "365e0a3", "source_split": "test_challenge", "tasks": {"test": [], "train": ["365e0a3_1", "365e0a3_2", "365e0a3_3"], "validation": []}}
+{"family": "36705ae", "source_split": "test_challenge", "tasks": {"test": ["36705ae_3", "36705ae_1"], "train": [], "validation": ["36705ae_2"]}}
+{"family": "37a8675", "source_split": "dev", "tasks": {"test": ["37a8675_1", "37a8675_2"], "train": [], "validation": ["37a8675_3"]}}
+{"family": "383a053", "source_split": "test_challenge", "tasks": {"test": ["383a053_2"], "train": ["383a053_3"], "validation": ["383a053_1"]}}
+{"family": "383cbac", "source_split": "dev", "tasks": {"test": ["383cbac_1"], "train": ["383cbac_2"], "validation": ["383cbac_3"]}}
+{"family": "396c5a2", "source_split": "dev", "tasks": {"test": ["396c5a2_1"], "train": ["396c5a2_2"], "validation": ["396c5a2_3"]}}
+{"family": "3aa1a22", "source_split": "test_normal", "tasks": {"test": ["3aa1a22_2"], "train": ["3aa1a22_3"], "validation": ["3aa1a22_1"]}}
+{"family": "3ab5b8b", "source_split": "dev", "tasks": {"test": [], "train": ["3ab5b8b_1", "3ab5b8b_2", "3ab5b8b_3"], "validation": []}}
+{"family": "3b8fb7a", "source_split": "test_normal", "tasks": {"test": ["3b8fb7a_2"], "train": ["3b8fb7a_3"], "validation": ["3b8fb7a_1"]}}
+{"family": "3c13f5a", "source_split": "train", "tasks": {"test": ["3c13f5a_2"], "train": ["3c13f5a_3"], "validation": ["3c13f5a_1"]}}
+{"family": "3d9a636", "source_split": "test_normal", "tasks": {"test": ["3d9a636_1", "3d9a636_2"], "train": [], "validation": ["3d9a636_3"]}}
+{"family": "3f3c139", "source_split": "test_challenge", "tasks": {"test": ["3f3c139_2"], "train": ["3f3c139_3"], "validation": ["3f3c139_1"]}}
+{"family": "3fcc458", "source_split": "test_challenge", "tasks": {"test": ["3fcc458_2", "3fcc458_3"], "train": [], "validation": ["3fcc458_1"]}}
+{"family": "4242c97", "source_split": "test_challenge", "tasks": {"test": ["4242c97_1", "4242c97_2", "4242c97_3"], "train": [], "validation": []}}
+{"family": "425a494", "source_split": "test_normal", "tasks": {"test": ["425a494_3"], "train": ["425a494_1"], "validation": ["425a494_2"]}}
+{"family": "432dc7a", "source_split": "test_challenge", "tasks": {"test": ["432dc7a_2", "432dc7a_3"], "train": [], "validation": ["432dc7a_1"]}}
+{"family": "4441ee9", "source_split": "test_challenge", "tasks": {"test": ["4441ee9_1", "4441ee9_2"], "train": [], "validation": ["4441ee9_3"]}}
+{"family": "476b213", "source_split": "test_challenge", "tasks": {"test": ["476b213_3"], "train": ["476b213_1"], "validation": ["476b213_2"]}}
+{"family": "4815c06", "source_split": "test_challenge", "tasks": {"test": ["4815c06_1", "4815c06_2"], "train": [], "validation": ["4815c06_3"]}}
+{"family": "4ac4a8d", "source_split": "test_challenge", "tasks": {"test": [], "train": ["4ac4a8d_1", "4ac4a8d_2", "4ac4a8d_3"], "validation": []}}
+{"family": "4d12842", "source_split": "test_challenge", "tasks": {"test": ["4d12842_2"], "train": ["4d12842_3"], "validation": ["4d12842_1"]}}
+{"family": "4ec8de5", "source_split": "dev", "tasks": {"test": ["4ec8de5_2"], "train": ["4ec8de5_3"], "validation": ["4ec8de5_1"]}}
+{"family": "4fab96f", "source_split": "dev", "tasks": {"test": ["4fab96f_1", "4fab96f_2", "4fab96f_3"], "train": [], "validation": []}}
+{"family": "50e1ac9", "source_split": "dev", "tasks": {"test": [], "train": ["50e1ac9_1", "50e1ac9_2", "50e1ac9_3"], "validation": []}}
+{"family": "522e5e5", "source_split": "test_normal", "tasks": {"test": ["522e5e5_3"], "train": ["522e5e5_1"], "validation": ["522e5e5_2"]}}
+{"family": "5238afc", "source_split": "test_challenge", "tasks": {"test": [], "train": ["5238afc_1", "5238afc_2", "5238afc_3"], "validation": []}}
+{"family": "530b157", "source_split": "dev", "tasks": {"test": ["530b157_2"], "train": ["530b157_3"], "validation": ["530b157_1"]}}
+{"family": "552869a", "source_split": "test_normal", "tasks": {"test": ["552869a_3"], "train": ["552869a_1"], "validation": ["552869a_2"]}}
+{"family": "57c3486", "source_split": "dev", "tasks": {"test": ["57c3486_2"], "train": ["57c3486_3"], "validation": ["57c3486_1"]}}
+{"family": "5800354", "source_split": "test_challenge", "tasks": {"test": [], "train": ["5800354_1", "5800354_2", "5800354_3"], "validation": []}}
+{"family": "59bcfc8", "source_split": "test_challenge", "tasks": {"test": [], "train": ["59bcfc8_1", "59bcfc8_2", "59bcfc8_3"], "validation": []}}
+{"family": "59fae45", "source_split": "test_normal", "tasks": {"test": ["59fae45_3"], "train": ["59fae45_1"], "validation": ["59fae45_2"]}}
+{"family": "5a83b05", "source_split": "test_normal", "tasks": {"test": ["5a83b05_2"], "train": ["5a83b05_3"], "validation": ["5a83b05_1"]}}
+{"family": "5e27cd7", "source_split": "test_challenge", "tasks": {"test": ["5e27cd7_2"], "train": ["5e27cd7_3"], "validation": ["5e27cd7_1"]}}
+{"family": "60d0b5b", "source_split": "train", "tasks": {"test": ["60d0b5b_1"], "train": ["60d0b5b_2"], "validation": ["60d0b5b_3"]}}
+{"family": "6104387", "source_split": "train", "tasks": {"test": [], "train": ["6104387_1", "6104387_2", "6104387_3"], "validation": []}}
+{"family": "6171bbc", "source_split": "dev", "tasks": {"test": ["6171bbc_1", "6171bbc_2", "6171bbc_3"], "train": [], "validation": []}}
+{"family": "634f342", "source_split": "test_normal", "tasks": {"test": [], "train": ["634f342_1", "634f342_2", "634f342_3"], "validation": []}}
+{"family": "6474048", "source_split": "test_challenge", "tasks": {"test": ["6474048_2", "6474048_3"], "train": [], "validation": ["6474048_1"]}}
+{"family": "652485c", "source_split": "test_normal", "tasks": {"test": ["652485c_1", "652485c_2", "652485c_3"], "train": [], "validation": []}}
+{"family": "6588a51", "source_split": "test_challenge", "tasks": {"test": ["6588a51_1", "6588a51_2"], "train": [], "validation": ["6588a51_3"]}}
+{"family": "66b7899", "source_split": "test_challenge", "tasks": {"test": [], "train": ["66b7899_1", "66b7899_2", "66b7899_3"], "validation": []}}
+{"family": "68ee2c9", "source_split": "dev", "tasks": {"test": ["68ee2c9_1"], "train": ["68ee2c9_2"], "validation": ["68ee2c9_3"]}}
+{"family": "690d51b", "source_split": "test_challenge", "tasks": {"test": ["690d51b_2"], "train": ["690d51b_3"], "validation": ["690d51b_1"]}}
+{"family": "692c77d", "source_split": "train", "tasks": {"test": ["692c77d_2"], "train": ["692c77d_3"], "validation": ["692c77d_1"]}}
+{"family": "69ba40f", "source_split": "test_challenge", "tasks": {"test": [], "train": ["69ba40f_1", "69ba40f_2", "69ba40f_3"], "validation": []}}
+{"family": "6a5e690", "source_split": "test_challenge", "tasks": {"test": [], "train": ["6a5e690_1", "6a5e690_2", "6a5e690_3"], "validation": []}}
+{"family": "6b6ca61", "source_split": "test_normal", "tasks": {"test": ["6b6ca61_3"], "train": ["6b6ca61_1"], "validation": ["6b6ca61_2"]}}
+{"family": "6bdbc26", "source_split": "dev", "tasks": {"test": [], "train": ["6bdbc26_1", "6bdbc26_2", "6bdbc26_3"], "validation": []}}
+{"family": "6c2c621", "source_split": "dev", "tasks": {"test": ["6c2c621_3"], "train": ["6c2c621_1"], "validation": ["6c2c621_2"]}}
+{"family": "6d59d90", "source_split": "test_challenge", "tasks": {"test": ["6d59d90_1"], "train": ["6d59d90_2"], "validation": ["6d59d90_3"]}}
+{"family": "6ea6792", "source_split": "train", "tasks": {"test": [], "train": ["6ea6792_1", "6ea6792_2", "6ea6792_3"], "validation": []}}
+{"family": "6f4b9a5", "source_split": "test_normal", "tasks": {"test": [], "train": ["6f4b9a5_1", "6f4b9a5_2", "6f4b9a5_3"], "validation": []}}
+{"family": "7238049", "source_split": "test_challenge", "tasks": {"test": ["7238049_1", "7238049_2", "7238049_3"], "train": [], "validation": []}}
+{"family": "7264edc", "source_split": "test_challenge", "tasks": {"test": ["7264edc_3"], "train": ["7264edc_1"], "validation": ["7264edc_2"]}}
+{"family": "7434096", "source_split": "test_challenge", "tasks": {"test": [], "train": ["7434096_1", "7434096_2", "7434096_3"], "validation": []}}
+{"family": "7574325", "source_split": "test_challenge", "tasks": {"test": ["7574325_2"], "train": ["7574325_3"], "validation": ["7574325_1"]}}
+{"family": "76f2c72", "source_split": "train", "tasks": {"test": ["76f2c72_1"], "train": ["76f2c72_2"], "validation": ["76f2c72_3"]}}
+{"family": "771d8fc", "source_split": "train", "tasks": {"test": ["771d8fc_3"], "train": ["771d8fc_1"], "validation": ["771d8fc_2"]}}
+{"family": "77bcb81", "source_split": "test_challenge", "tasks": {"test": ["77bcb81_3"], "train": ["77bcb81_1"], "validation": ["77bcb81_2"]}}
+{"family": "7847649", "source_split": "test_normal", "tasks": {"test": ["7847649_1", "7847649_2"], "train": [], "validation": ["7847649_3"]}}
+{"family": "7b97e6d", "source_split": "test_challenge", "tasks": {"test": ["7b97e6d_3", "7b97e6d_1"], "train": [], "validation": ["7b97e6d_2"]}}
+{"family": "7bdaf23", "source_split": "test_challenge", "tasks": {"test": [], "train": ["7bdaf23_1", "7bdaf23_2", "7bdaf23_3"], "validation": []}}
+{"family": "7d26579", "source_split": "test_challenge", "tasks": {"test": ["7d26579_2"], "train": ["7d26579_3"], "validation": ["7d26579_1"]}}
+{"family": "7d7fbf6", "source_split": "train", "tasks": {"test": ["7d7fbf6_1"], "train": ["7d7fbf6_2"], "validation": ["7d7fbf6_3"]}}
+{"family": "7e1be84", "source_split": "test_challenge", "tasks": {"test": ["7e1be84_3"], "train": ["7e1be84_1"], "validation": ["7e1be84_2"]}}
+{"family": "80acbaf", "source_split": "test_challenge", "tasks": {"test": ["80acbaf_2"], "train": ["80acbaf_3"], "validation": ["80acbaf_1"]}}
+{"family": "81be677", "source_split": "test_challenge", "tasks": {"test": ["81be677_3"], "train": ["81be677_1"], "validation": ["81be677_2"]}}
+{"family": "82d2e01", "source_split": "test_challenge", "tasks": {"test": [], "train": ["82d2e01_1", "82d2e01_2", "82d2e01_3"], "validation": []}}
+{"family": "82e2fac", "source_split": "train", "tasks": {"test": ["82e2fac_1"], "train": ["82e2fac_2"], "validation": ["82e2fac_3"]}}
+{"family": "83a7951", "source_split": "test_normal", "tasks": {"test": [], "train": ["83a7951_1", "83a7951_2", "83a7951_3"], "validation": []}}
+{"family": "8749218", "source_split": "test_normal", "tasks": {"test": ["8749218_1", "8749218_2", "8749218_3"], "train": [], "validation": []}}
+{"family": "8a13317", "source_split": "test_challenge", "tasks": {"test": [], "train": ["8a13317_1", "8a13317_2", "8a13317_3"], "validation": []}}
+{"family": "8ce6779", "source_split": "test_normal", "tasks": {"test": ["8ce6779_3"], "train": ["8ce6779_1"], "validation": ["8ce6779_2"]}}
+{"family": "8d42650", "source_split": "test_challenge", "tasks": {"test": ["8d42650_3"], "train": ["8d42650_1"], "validation": ["8d42650_2"]}}
+{"family": "8f79e35", "source_split": "test_challenge", "tasks": {"test": ["8f79e35_3", "8f79e35_1"], "train": [], "validation": ["8f79e35_2"]}}
+{"family": "9016950", "source_split": "test_normal", "tasks": {"test": ["9016950_2"], "train": ["9016950_3"], "validation": ["9016950_1"]}}
+{"family": "906f2c7", "source_split": "test_challenge", "tasks": {"test": ["906f2c7_3"], "train": ["906f2c7_1"], "validation": ["906f2c7_2"]}}
+{"family": "90adc3f", "source_split": "test_normal", "tasks": {"test": ["90adc3f_3", "90adc3f_1"], "train": [], "validation": ["90adc3f_2"]}}
+{"family": "9126bf0", "source_split": "test_challenge", "tasks": {"test": ["9126bf0_1"], "train": ["9126bf0_2"], "validation": ["9126bf0_3"]}}
+{"family": "92fe421", "source_split": "test_challenge", "tasks": {"test": ["92fe421_3"], "train": ["92fe421_1", "92fe421_2"], "validation": []}}
+{"family": "953b296", "source_split": "test_challenge", "tasks": {"test": ["953b296_1", "953b296_2", "953b296_3"], "train": [], "validation": []}}
+{"family": "96bf160", "source_split": "test_challenge", "tasks": {"test": ["96bf160_3", "96bf160_1"], "train": [], "validation": ["96bf160_2"]}}
+{"family": "986aa4e", "source_split": "test_normal", "tasks": {"test": [], "train": ["986aa4e_1", "986aa4e_2", "986aa4e_3"], "validation": []}}
+{"family": "9871968", "source_split": "test_challenge", "tasks": {"test": [], "train": ["9871968_1", "9871968_2", "9871968_3"], "validation": []}}
+{"family": "988af8e", "source_split": "test_challenge", "tasks": {"test": ["988af8e_3"], "train": ["988af8e_1"], "validation": ["988af8e_2"]}}
+{"family": "98d2608", "source_split": "test_challenge", "tasks": {"test": [], "train": ["98d2608_1", "98d2608_2", "98d2608_3"], "validation": []}}
+{"family": "998908e", "source_split": "test_challenge", "tasks": {"test": [], "train": ["998908e_1", "998908e_2", "998908e_3"], "validation": []}}
+{"family": "9a16324", "source_split": "test_challenge", "tasks": {"test": [], "train": ["9a16324_1", "9a16324_2", "9a16324_3"], "validation": []}}
+{"family": "9aae7da", "source_split": "test_challenge", "tasks": {"test": [], "train": ["9aae7da_1", "9aae7da_2", "9aae7da_3"], "validation": []}}
+{"family": "9b2dc64", "source_split": "test_challenge", "tasks": {"test": ["9b2dc64_1"], "train": ["9b2dc64_2"], "validation": ["9b2dc64_3"]}}
+{"family": "9bf2c8a", "source_split": "test_challenge", "tasks": {"test": ["9bf2c8a_2"], "train": ["9bf2c8a_3"], "validation": ["9bf2c8a_1"]}}
+{"family": "9dabbc9", "source_split": "test_normal", "tasks": {"test": ["9dabbc9_1"], "train": ["9dabbc9_2"], "validation": ["9dabbc9_3"]}}
+{"family": "9ef034e", "source_split": "test_challenge", "tasks": {"test": ["9ef034e_2"], "train": ["9ef034e_3"], "validation": ["9ef034e_1"]}}
+{"family": "9ef798c", "source_split": "test_normal", "tasks": {"test": ["9ef798c_3"], "train": ["9ef798c_1"], "validation": ["9ef798c_2"]}}
+{"family": "a132254", "source_split": "test_challenge", "tasks": {"test": [], "train": ["a132254_1", "a132254_2", "a132254_3"], "validation": []}}
+{"family": "a1d3dfd", "source_split": "test_challenge", "tasks": {"test": [], "train": ["a1d3dfd_1", "a1d3dfd_2", "a1d3dfd_3"], "validation": []}}
+{"family": "a30375d", "source_split": "test_normal", "tasks": {"test": ["a30375d_3", "a30375d_1"], "train": [], "validation": ["a30375d_2"]}}
+{"family": "a3ba388", "source_split": "test_challenge", "tasks": {"test": ["a3ba388_1", "a3ba388_2", "a3ba388_3"], "train": [], "validation": []}}
+{"family": "a53a8fd", "source_split": "test_challenge", "tasks": {"test": ["a53a8fd_1", "a53a8fd_2", "a53a8fd_3"], "train": [], "validation": []}}
+{"family": "a5b0084", "source_split": "test_challenge", "tasks": {"test": ["a5b0084_1"], "train": ["a5b0084_2"], "validation": ["a5b0084_3"]}}
+{"family": "a676f2a", "source_split": "test_challenge", "tasks": {"test": [], "train": ["a676f2a_1", "a676f2a_2", "a676f2a_3"], "validation": []}}
+{"family": "a7179fa", "source_split": "test_challenge", "tasks": {"test": [], "train": ["a7179fa_1", "a7179fa_2", "a7179fa_3"], "validation": []}}
+{"family": "a8f302f", "source_split": "test_challenge", "tasks": {"test": ["a8f302f_3", "a8f302f_1"], "train": [], "validation": ["a8f302f_2"]}}
+{"family": "a97e35d", "source_split": "test_challenge", "tasks": {"test": ["a97e35d_2"], "train": ["a97e35d_3"], "validation": ["a97e35d_1"]}}
+{"family": "aa8502b", "source_split": "train", "tasks": {"test": [], "train": ["aa8502b_1", "aa8502b_2", "aa8502b_3"], "validation": []}}
+{"family": "aaa25aa", "source_split": "test_challenge", "tasks": {"test": ["aaa25aa_2"], "train": ["aaa25aa_3"], "validation": ["aaa25aa_1"]}}
+{"family": "ac62177", "source_split": "test_challenge", "tasks": {"test": ["ac62177_1", "ac62177_2", "ac62177_3"], "train": [], "validation": []}}
+{"family": "adb1060", "source_split": "test_challenge", "tasks": {"test": ["adb1060_3"], "train": ["adb1060_1"], "validation": ["adb1060_2"]}}
+{"family": "af84964", "source_split": "test_challenge", "tasks": {"test": ["af84964_3"], "train": ["af84964_1"], "validation": ["af84964_2"]}}
+{"family": "afc0fce", "source_split": "train", "tasks": {"test": [], "train": ["afc0fce_1", "afc0fce_2", "afc0fce_3"], "validation": []}}
+{"family": "afc4005", "source_split": "test_normal", "tasks": {"test": [], "train": ["afc4005_1", "afc4005_2", "afc4005_3"], "validation": []}}
+{"family": "b05f69a", "source_split": "test_challenge", "tasks": {"test": ["b05f69a_2"], "train": ["b05f69a_3"], "validation": ["b05f69a_1"]}}
+{"family": "b08d5ef", "source_split": "test_challenge", "tasks": {"test": [], "train": ["b08d5ef_1", "b08d5ef_2", "b08d5ef_3"], "validation": []}}
+{"family": "b0934aa", "source_split": "test_challenge", "tasks": {"test": ["b0934aa_1"], "train": ["b0934aa_2"], "validation": ["b0934aa_3"]}}
+{"family": "b0a8eae", "source_split": "train", "tasks": {"test": ["b0a8eae_1"], "train": ["b0a8eae_2"], "validation": ["b0a8eae_3"]}}
+{"family": "b119b1f", "source_split": "dev", "tasks": {"test": ["b119b1f_3"], "train": ["b119b1f_1"], "validation": ["b119b1f_2"]}}
+{"family": "b3bdcc1", "source_split": "test_challenge", "tasks": {"test": ["b3bdcc1_1"], "train": ["b3bdcc1_2"], "validation": ["b3bdcc1_3"]}}
+{"family": "b4707e8", "source_split": "test_challenge", "tasks": {"test": ["b4707e8_1"], "train": ["b4707e8_2"], "validation": ["b4707e8_3"]}}
+{"family": "b68eb83", "source_split": "test_challenge", "tasks": {"test": ["b68eb83_1", "b68eb83_2"], "train": [], "validation": ["b68eb83_3"]}}
+{"family": "b6d1104", "source_split": "test_normal", "tasks": {"test": [], "train": ["b6d1104_1", "b6d1104_2", "b6d1104_3"], "validation": []}}
+{"family": "b6d1f70", "source_split": "test_challenge", "tasks": {"test": ["b6d1f70_3"], "train": ["b6d1f70_1"], "validation": ["b6d1f70_2"]}}
+{"family": "b71318e", "source_split": "test_challenge", "tasks": {"test": ["b71318e_1"], "train": ["b71318e_2"], "validation": ["b71318e_3"]}}
+{"family": "b7a9ee9", "source_split": "train", "tasks": {"test": ["b7a9ee9_2"], "train": ["b7a9ee9_3"], "validation": ["b7a9ee9_1"]}}
+{"family": "b9c5c9a", "source_split": "test_normal", "tasks": {"test": [], "train": ["b9c5c9a_1", "b9c5c9a_2", "b9c5c9a_3"], "validation": []}}
+{"family": "ba46d91", "source_split": "test_challenge", "tasks": {"test": ["ba46d91_3"], "train": ["ba46d91_1"], "validation": ["ba46d91_2"]}}
+{"family": "baeb104", "source_split": "test_challenge", "tasks": {"test": ["baeb104_3", "baeb104_1"], "train": [], "validation": ["baeb104_2"]}}
+{"family": "bcb9696", "source_split": "test_challenge", "tasks": {"test": [], "train": ["bcb9696_1", "bcb9696_2", "bcb9696_3"], "validation": []}}
+{"family": "bde252e", "source_split": "test_normal", "tasks": {"test": ["bde252e_1", "bde252e_2", "bde252e_3"], "train": [], "validation": []}}
+{"family": "c1091c7", "source_split": "test_challenge", "tasks": {"test": ["c1091c7_3"], "train": ["c1091c7_1"], "validation": ["c1091c7_2"]}}
+{"family": "c77c005", "source_split": "test_normal", "tasks": {"test": ["c77c005_2"], "train": ["c77c005_3"], "validation": ["c77c005_1"]}}
+{"family": "c8f5f44", "source_split": "test_challenge", "tasks": {"test": ["c8f5f44_3"], "train": ["c8f5f44_1"], "validation": ["c8f5f44_2"]}}
+{"family": "c901732", "source_split": "train", "tasks": {"test": [], "train": ["c901732_1", "c901732_2", "c901732_3"], "validation": []}}
+{"family": "c9458ed", "source_split": "test_challenge", "tasks": {"test": ["c9458ed_3"], "train": ["c9458ed_1"], "validation": ["c9458ed_2"]}}
+{"family": "cb4ee7a", "source_split": "test_challenge", "tasks": {"test": [], "train": ["cb4ee7a_1", "cb4ee7a_2", "cb4ee7a_3"], "validation": []}}
+{"family": "ccb4494", "source_split": "train", "tasks": {"test": ["ccb4494_2", "ccb4494_3"], "train": [], "validation": ["ccb4494_1"]}}
+{"family": "ccf4b82", "source_split": "test_normal", "tasks": {"test": ["ccf4b82_1"], "train": ["ccf4b82_2"], "validation": ["ccf4b82_3"]}}
+{"family": "cdaaea5", "source_split": "test_challenge", "tasks": {"test": ["cdaaea5_1", "cdaaea5_2"], "train": [], "validation": ["cdaaea5_3"]}}
+{"family": "cdf61bd", "source_split": "test_challenge", "tasks": {"test": ["cdf61bd_1"], "train": ["cdf61bd_2"], "validation": ["cdf61bd_3"]}}
+{"family": "ce359b5", "source_split": "train", "tasks": {"test": ["ce359b5_2"], "train": ["ce359b5_3"], "validation": ["ce359b5_1"]}}
+{"family": "ce73d68", "source_split": "test_challenge", "tasks": {"test": ["ce73d68_1", "ce73d68_2", "ce73d68_3"], "train": [], "validation": []}}
+{"family": "cef9191", "source_split": "test_normal", "tasks": {"test": ["cef9191_3"], "train": ["cef9191_1"], "validation": ["cef9191_2"]}}
+{"family": "cf6abd2", "source_split": "train", "tasks": {"test": [], "train": ["cf6abd2_1", "cf6abd2_2", "cf6abd2_3"], "validation": []}}
+{"family": "d037dc8", "source_split": "test_challenge", "tasks": {"test": [], "train": ["d037dc8_1", "d037dc8_2", "d037dc8_3"], "validation": []}}
+{"family": "d0b1f43", "source_split": "train", "tasks": {"test": ["d0b1f43_1", "d0b1f43_2"], "train": [], "validation": ["d0b1f43_3"]}}
+{"family": "d18139b", "source_split": "test_normal", "tasks": {"test": [], "train": ["d18139b_1", "d18139b_2", "d18139b_3"], "validation": []}}
+{"family": "d194965", "source_split": "test_normal", "tasks": {"test": ["d194965_1", "d194965_2"], "train": [], "validation": ["d194965_3"]}}
+{"family": "d37c235", "source_split": "test_challenge", "tasks": {"test": ["d37c235_1"], "train": ["d37c235_2"], "validation": ["d37c235_3"]}}
+{"family": "d4e9306", "source_split": "dev", "tasks": {"test": ["d4e9306_2"], "train": ["d4e9306_3"], "validation": ["d4e9306_1"]}}
+{"family": "d6ac34d", "source_split": "test_normal", "tasks": {"test": ["d6ac34d_3", "d6ac34d_1"], "train": [], "validation": ["d6ac34d_2"]}}
+{"family": "d6d8cb6", "source_split": "test_challenge", "tasks": {"test": ["d6d8cb6_1"], "train": ["d6d8cb6_2"], "validation": ["d6d8cb6_3"]}}
+{"family": "d8e490b", "source_split": "test_challenge", "tasks": {"test": [], "train": ["d8e490b_1", "d8e490b_2", "d8e490b_3"], "validation": []}}
+{"family": "d9987f6", "source_split": "test_challenge", "tasks": {"test": [], "train": ["d9987f6_1", "d9987f6_2", "d9987f6_3"], "validation": []}}
+{"family": "dac78d9", "source_split": "test_normal", "tasks": {"test": ["dac78d9_2"], "train": ["dac78d9_3"], "validation": ["dac78d9_1"]}}
+{"family": "dbc0276", "source_split": "test_challenge", "tasks": {"test": ["dbc0276_1", "dbc0276_2"], "train": [], "validation": ["dbc0276_3"]}}
+{"family": "dc5c5c6", "source_split": "test_challenge", "tasks": {"test": ["dc5c5c6_1"], "train": ["dc5c5c6_2"], "validation": ["dc5c5c6_3"]}}
+{"family": "dcb2559", "source_split": "test_challenge", "tasks": {"test": ["dcb2559_3"], "train": ["dcb2559_1"], "validation": ["dcb2559_2"]}}
+{"family": "dcbd34b", "source_split": "test_challenge", "tasks": {"test": ["dcbd34b_3", "dcbd34b_1"], "train": [], "validation": ["dcbd34b_2"]}}
+{"family": "df61dc5", "source_split": "dev", "tasks": {"test": ["df61dc5_1", "df61dc5_2", "df61dc5_3"], "train": [], "validation": []}}
+{"family": "e0fe09c", "source_split": "test_challenge", "tasks": {"test": [], "train": ["e0fe09c_1", "e0fe09c_2", "e0fe09c_3"], "validation": []}}
+{"family": "e201314", "source_split": "test_challenge", "tasks": {"test": ["e201314_3"], "train": ["e201314_1"], "validation": ["e201314_2"]}}
+{"family": "e3d6c94", "source_split": "train", "tasks": {"test": [], "train": ["e3d6c94_1", "e3d6c94_2", "e3d6c94_3"], "validation": []}}
+{"family": "e52623a", "source_split": "test_challenge", "tasks": {"test": ["e52623a_1", "e52623a_2"], "train": [], "validation": ["e52623a_3"]}}
+{"family": "e70b117", "source_split": "test_challenge", "tasks": {"test": ["e70b117_1"], "train": ["e70b117_2"], "validation": ["e70b117_3"]}}
+{"family": "e775c78", "source_split": "test_challenge", "tasks": {"test": ["e775c78_3", "e775c78_1"], "train": [], "validation": ["e775c78_2"]}}
+{"family": "e7a10f8", "source_split": "train", "tasks": {"test": [], "train": ["e7a10f8_1", "e7a10f8_2", "e7a10f8_3"], "validation": []}}
+{"family": "e7f15ba", "source_split": "test_challenge", "tasks": {"test": ["e7f15ba_1", "e7f15ba_2"], "train": [], "validation": ["e7f15ba_3"]}}
+{"family": "e85d92a", "source_split": "train", "tasks": {"test": ["e85d92a_1", "e85d92a_2", "e85d92a_3"], "train": [], "validation": []}}
+{"family": "eb5ad85", "source_split": "test_challenge", "tasks": {"test": [], "train": ["eb5ad85_1", "eb5ad85_2", "eb5ad85_3"], "validation": []}}
+{"family": "ec437da", "source_split": "test_challenge", "tasks": {"test": ["ec437da_2"], "train": ["ec437da_3"], "validation": ["ec437da_1"]}}
+{"family": "ec655df", "source_split": "test_challenge", "tasks": {"test": [], "train": ["ec655df_1", "ec655df_2", "ec655df_3"], "validation": []}}
+{"family": "efc3cea", "source_split": "test_challenge", "tasks": {"test": ["efc3cea_2"], "train": ["efc3cea_3"], "validation": ["efc3cea_1"]}}
+{"family": "f099b4c", "source_split": "test_challenge", "tasks": {"test": ["f099b4c_2", "f099b4c_3"], "train": [], "validation": ["f099b4c_1"]}}
+{"family": "f323bae", "source_split": "test_normal", "tasks": {"test": ["f323bae_1", "f323bae_2", "f323bae_3"], "train": [], "validation": []}}
+{"family": "f37e804", "source_split": "test_challenge", "tasks": {"test": ["f37e804_1"], "train": ["f37e804_2"], "validation": ["f37e804_3"]}}
+{"family": "f3a6713", "source_split": "test_challenge", "tasks": {"test": ["f3a6713_1"], "train": ["f3a6713_2"], "validation": ["f3a6713_3"]}}
+{"family": "f3f60f0", "source_split": "test_normal", "tasks": {"test": [], "train": ["f3f60f0_1", "f3f60f0_2", "f3f60f0_3"], "validation": []}}
+{"family": "f691597", "source_split": "test_challenge", "tasks": {"test": ["f691597_3"], "train": ["f691597_1"], "validation": ["f691597_2"]}}
+{"family": "f6936d4", "source_split": "test_challenge", "tasks": {"test": [], "train": ["f6936d4_1", "f6936d4_2", "f6936d4_3"], "validation": []}}
+{"family": "f6be291", "source_split": "test_challenge", "tasks": {"test": ["f6be291_2"], "train": ["f6be291_3"], "validation": ["f6be291_1"]}}
+{"family": "f6f2e67", "source_split": "test_challenge", "tasks": {"test": ["f6f2e67_2"], "train": ["f6f2e67_3"], "validation": ["f6f2e67_1"]}}
+{"family": "f861c32", "source_split": "test_normal", "tasks": {"test": ["f861c32_1"], "train": ["f861c32_2"], "validation": ["f861c32_3"]}}
+{"family": "f86d850", "source_split": "test_challenge", "tasks": {"test": ["f86d850_2", "f86d850_3"], "train": [], "validation": ["f86d850_1"]}}
+{"family": "f99d726", "source_split": "test_challenge", "tasks": {"test": ["f99d726_1", "f99d726_2", "f99d726_3"], "train": [], "validation": []}}
+{"family": "fa327a6", "source_split": "test_challenge", "tasks": {"test": [], "train": ["fa327a6_1", "fa327a6_2", "fa327a6_3"], "validation": []}}
+{"family": "fac291d", "source_split": "dev", "tasks": {"test": ["fac291d_3"], "train": ["fac291d_1"], "validation": ["fac291d_2"]}}
+{"family": "fb05fed", "source_split": "test_challenge", "tasks": {"test": ["fb05fed_3"], "train": ["fb05fed_1"], "validation": ["fb05fed_2"]}}
+{"family": "fd1f8fa", "source_split": "test_normal", "tasks": {"test": [], "train": ["fd1f8fa_1", "fd1f8fa_2", "fd1f8fa_3"], "validation": []}}
+{"family": "fdc4b74", "source_split": "test_challenge", "tasks": {"test": ["fdc4b74_1", "fdc4b74_2", "fdc4b74_3"], "train": [], "validation": []}}
+{"family": "fddb6b6", "source_split": "test_challenge", "tasks": {"test": ["fddb6b6_3", "fddb6b6_1"], "train": [], "validation": ["fddb6b6_2"]}}
+{"family": "ff58e36", "source_split": "test_normal", "tasks": {"test": ["ff58e36_2"], "train": ["ff58e36_3"], "validation": ["ff58e36_1"]}}
+{"family": "ffe6d5e", "source_split": "test_normal", "tasks": {"test": [], "train": ["ffe6d5e_1", "ffe6d5e_2", "ffe6d5e_3"], "validation": []}}
+{"family": "ffea2b5", "source_split": "test_challenge", "tasks": {"test": [], "train": ["ffea2b5_1", "ffea2b5_2", "ffea2b5_3"], "validation": []}}

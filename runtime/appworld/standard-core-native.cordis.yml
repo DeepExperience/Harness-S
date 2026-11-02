@@ -1,0 +1,92 @@
+# Project-frozen single-agent variant of the DSH headless standard bundle.
+#
+# Keep the standard coding persona, agent instructions, native bash/filesystem
+# tools, background jobs, context compaction/pruning, persistence, and the core
+# agent loop.  Disable only optional high-level scaffold whose contribution we
+# want to hold out of the training Harness: skills, plan mode, goals/todo,
+# delegation/workflows, and web search.
+#
+# This is a patch over `dsh --profile headless`; row ids are pinned to the DSH
+# commit recorded by the project manifest.  scripts/verify_harness_configs.py
+# fails closed if a required row disappears or a disabled capability leaks back
+# into the effective composition.
+
+- id: tools
+  config:
+    mode: native
+
+# UI-only descriptions must not consume rollout actions when omitted. The
+# shared adapter retains strict command validation and the original executor.
+- id: tool-bash
+  disabled: true
+# `name` in an id patch is a match guard, not a module replacement. Insert
+# the adapted plugin explicitly after disabling its upstream registration.
+- insert:
+    - id: hapt-tool-bash
+      name: "{{HARNESS_S_ROOT}}/runtime/appworld/bash_optional_description.mjs"
+      disabled: !!js process.platform === 'win32'
+
+# The headless base bundle still mounts the legacy editor next to the modern
+# Standard filesystem plane.  Core follows the current Standard/native tool
+# contract, so retain read/write/edit/search and remove this orphaned legacy
+# interface.
+- id: tool-str-replace-editor
+  disabled: true
+
+# Skills.
+- id: skill
+  disabled: true
+- id: skill-filesystem
+  disabled: true
+- id: skill-badge
+  disabled: true
+- id: tool-skill
+  disabled: true
+
+# Plan mode.
+- id: plan-mode
+  disabled: true
+
+# Goals and todo tracking.
+- id: goal
+  disabled: true
+- id: goal-round-driver
+  disabled: true
+- id: command-goal
+  disabled: true
+- id: tool-goal
+  disabled: true
+- id: tool-todo
+  disabled: true
+
+# Subagents, their providers/control plane, and workflow orchestration.
+- id: subagent
+  disabled: true
+- id: subagent-spawn-in-process
+  disabled: true
+- id: subagent-fork-in-process
+  disabled: true
+- id: tool-subagent-control
+  disabled: true
+- id: tool-subagent-list-agents
+  disabled: true
+- id: tool-subagent
+  disabled: true
+- id: tool-subagent-fork
+  disabled: true
+- id: tool-subagent-report
+  disabled: true
+- id: workflow-worker-thread
+  disabled: true
+- id: tool-workflow
+  disabled: true
+- id: tool-ralph
+  disabled: true
+
+# Web search and its provider.
+- id: web
+  disabled: true
+- id: web-search-deepseek
+  disabled: true
+- id: tool-web
+  disabled: true

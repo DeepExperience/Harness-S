@@ -1,0 +1,25 @@
+# Qwen/OpenAI-compatible transport ablation. Agent presets and tool
+# presentation remain owned by the upstream DeepSeek Harness bundles.
+
+- id: agent-default-model
+  config:
+    provider: qwen-local
+    model: !!js process.env.DSH_MODEL ?? 'Qwen3.5-4B'
+
+- id: llm-pi-ai
+  config:
+    providers:
+      qwen-local:
+        displayName: Qwen local vLLM
+        apiKeyEnv: QWEN_LOCAL_API_KEY
+        api: openai-completions
+        baseURL: !!js process.env.QWEN_LOCAL_BASE_URL
+        streamIdleTimeoutMs: 1800000
+        models:
+          - id: !!js process.env.DSH_MODEL ?? 'Qwen3.5-4B'
+            name: Qwen3.5-4B
+            contextWindow: !!js Number(process.env.DSH_CONTEXT_WINDOW ?? 65536)
+            maxTokens: !!js Number(process.env.DSH_MAX_TOKENS ?? 16384)
+
+- id: session-title-llm
+  disabled: true

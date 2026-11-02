@@ -1,0 +1,73 @@
+{
+  "environment": "appworld",
+  "method": "h0_rescue",
+  "seed": 42,
+  "train_seed": 1234,
+  "kl": 0,
+  "policy": {
+    "hf_checkpoint": "${POLICY_MODEL}",
+    "distributed_checkpoint": "${POLICY_DIST_CHECKPOINT}",
+    "architecture": "qwen3.5-4B"
+  },
+  "appworld": {
+    "root": "${APPWORLD_ROOT}",
+    "python": "${APPWORLD_PYTHON}"
+  },
+  "sampling": {
+    "group_size": 8,
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "context_window": 65532,
+    "max_tokens": 8192
+  },
+  "schedule": {
+    "steps": 40,
+    "batch_size": 8,
+    "validation_steps": [
+      0,
+      10,
+      20,
+      30,
+      40
+    ]
+  },
+  "optimizer": {
+    "lr": 1e-06,
+    "beta1": 0.9,
+    "beta2": 0.98,
+    "weight_decay": 0.1,
+    "eps_clip": 0.2,
+    "eps_clip_high": 0.28
+  },
+  "he": {
+    "enabled": false,
+    "mode": "offline_frozen_pool"
+  },
+  "evaluation": {
+    "temperature": 1.0,
+    "attempts": 3
+  },
+  "runtime": {
+    "gpu_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "rollout_gpus_per_engine": 1,
+    "actor_tp": 2,
+    "actor_cp": 2,
+    "concurrency": 32,
+    "sglang_mem_fraction_static": 0.65,
+    "sglang_server_concurrency": 32,
+    "node_root": "${NODE_ROOT}",
+    "training_image": "harness-s:appworld",
+    "sandbox_image": "harness-s:appworld",
+    "docker_network": "harness-s",
+    "restart_attempts": 2
+  }
+}

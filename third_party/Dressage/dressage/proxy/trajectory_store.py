@@ -1,0 +1,465 @@
+"""In-memory trajectory storage grouped by ``instance_id``."""
+
+from __future__ import annotations
+
+import copy
+import threading
+import time
+import uuid
+from dataclasses import dataclass, field
+from typing import Any
+
+from dressage.transport import (
+    TQFieldLayout,
+    is_tq_field_layout_dict,
+)
+
+
+@dataclass
+class TrajectorySegment:
+    """One finalized trajectory segment stored by the proxy."""
+
+    uid: str
+    trajectory_id: str
+    turn_id: str
+    instance_id: str
+    segment_index: int
+    segment_count: int
+    messages: list[dict]
+    tools: list[dict[str, Any]] | None
+    tokens: list[int]
+    full_logprobs: list[float] | TQFieldLayout
+    full_loss_mask: list[int]
+    aligned_response_length: int
+    full_versions: list[str] | None = None
+    routed_experts_chunks: list[dict[str, Any]] | TQFieldLayout | None = None
+    label: Any | None = None
+    finish_reason: str = "stop"
+    timestamp: float = field(default_factory=time.time)
+    extra_info: dict = field(default_factory=dict)
+
+    @property
+    def session_id(self) -> str:
+        return self.trajectory_id
+
+    def to_dict(self) -> dict:
+        data = {
+            "uid": self.uid,
+            "session_id": self.session_id,
+            "trajectory_id": self.trajectory_id,
+            "turn_id": self.turn_id,
+            "instance_id": self.instance_id,
+            "segment_index": self.segment_index,
+            "segment_count": self.segment_count,
+            "messages": self.messages,
+            "tools": self.tools,
+            "tokens": self.tokens,
+            "full_logprobs": (
+                self.full_logprobs.to_dict()
+                if isinstance(self.full_logprobs, TQFieldLayout)
+                else self.full_logprobs
+            ),
+            "full_loss_mask": self.full_loss_mask,
+            "aligned_response_length": self.aligned_response_length,
+            "label": self.label,
+            "finish_reason": self.finish_reason,
+            "timestamp": self.timestamp,
+            "extra_info": self.extra_info,
+        }
+        if self.full_versions is not None:
+            data["full_versions"] = self.full_versions
+        if self.routed_experts_chunks is not None:
+            data["routed_experts_chunks"] = (
+                self.routed_experts_chunks.to_dict()
+                if isinstance(self.routed_experts_chunks, TQFieldLayout)
+                else self.routed_experts_chunks
+            )
+        return data
+
+
+TrajectoryItem = TrajectorySegment
+
+
+class TrajectoryStore:
+    """Thread-safe store supporting both exact reads and batch draining."""
+
+    def __init__(self, min_group_size: int = 1, group_timeout: float = 300.0):
+        self._lock = threading.Lock()
+        self._by_instance: dict[str, list[TrajectorySegment]] = {}
+        self._by_trajectory: dict[str, list[TrajectorySegment]] = {}
+        self._instance_timestamps: dict[str, float] = {}
+        self._min_group_size = min_group_size
+        self._group_timeout = group_timeout
+
+    @staticmethod
+    def _trajectory_key(item: TrajectorySegment) -> str:
+        return item.trajectory_id
+
+    @staticmethod
+    def _item_segment_view(item: TrajectorySegment) -> str | None:
+        value = item.extra_info.get("segment_view")
+        return str(value) if value is not None else None
+
+    @staticmethod
+    def _item_token_build_mode(item: TrajectorySegment) -> str | None:
+        value = item.extra_info.get("token_build_mode")
+        return str(value) if value is not None else None
+
+    @classmethod
+    def _default_segment_view(cls, items: list[TrajectorySegment]) -> str | None:
+        token_build_modes = {cls._item_token_build_mode(item) for item in items}
+        if "tito" in token_build_modes:
+            return "lineage"
+        if "snapshot" in token_build_modes:
+            return "timeline"
+        return None
+
+    @classmethod
+    def _filter_segment_view(
+        cls,
+        items: list[TrajectorySegment],
+        segment_view: str | None,
+    ) -> list[TrajectorySegment]:
+        selected_view = segment_view or cls._default_segment_view(items)
+        if selected_view is None:
+            return list(items)
+        return [
+            item for item in items if cls._item_segment_view(item) == selected_view
+        ]
+
+    @staticmethod
+    def _item_from_dict(data: dict) -> TrajectorySegment:
+        trajectory_id = data.get("trajectory_id") or data.get("session_id")
+        if trajectory_id is None:
+            trajectory_id = str(uuid.uuid4())
+        for key in ("tokens", "full_logprobs", "full_loss_mask"):
+            if key not in data:
+                raise ValueError(f"trajectory segment missing required field: {key}")
+
+        token_count = len(data["tokens"])
+        raw_logprobs = data["full_logprobs"]
+        full_logprobs = (
+            TQFieldLayout.from_dict(raw_logprobs)
+            if is_tq_field_layout_dict(raw_logprobs)
+            else raw_logprobs
+        )
+        if isinstance(full_logprobs, TQFieldLayout):
+            if full_logprobs.token_count != token_count:
+                raise ValueError(
+                    "trajectory segment field length mismatch: full_logprobs "
+                    f"layout has {full_logprobs.token_count}, tokens has {token_count}"
+                )
+        elif len(full_logprobs) != token_count:
+            raise ValueError(
+                "trajectory segment field length mismatch: full_logprobs has "
+                f"{len(full_logprobs)}, tokens has {token_count}"
+            )
+        if len(data["full_loss_mask"]) != token_count:
+            raise ValueError(
+                "trajectory segment field length mismatch: full_loss_mask has "
+                f"{len(data['full_loss_mask'])}, tokens has {token_count}"
+            )
+        if data.get("full_versions") is not None and len(data["full_versions"]) != token_count:
+            raise ValueError(
+                "trajectory segment field length mismatch: full_versions has "
+                f"{len(data['full_versions'])}, tokens has {token_count}"
+            )
+
+        raw_routed_experts = data.get("routed_experts_chunks")
+        routed_experts_chunks = (
+            TQFieldLayout.from_dict(raw_routed_experts)
+            if is_tq_field_layout_dict(raw_routed_experts)
+            else raw_routed_experts
+        )
+        if (
+            isinstance(routed_experts_chunks, TQFieldLayout)
+            and routed_experts_chunks.token_count != token_count
+        ):
+            raise ValueError(
+                "trajectory segment field length mismatch: routed_experts_chunks "
+                f"layout has {routed_experts_chunks.token_count}, tokens has {token_count}"
+            )
+        return TrajectorySegment(
+            uid=data.get("uid", str(uuid.uuid4())),
+            trajectory_id=trajectory_id,
+            turn_id=data["turn_id"],
+            instance_id=data.get("instance_id", str(uuid.uuid4())),
+            segment_index=data.get("segment_index", 0),
+            segment_count=data.get("segment_count", 1),
+            messages=data["messages"],
+            tools=data.get("tools"),
+            tokens=data["tokens"],
+            full_logprobs=full_logprobs,
+            full_loss_mask=data["full_loss_mask"],
+            aligned_response_length=data.get("aligned_response_length", 0),
+            full_versions=(
+                None
+                if data.get("full_versions") is None
+                else [str(value) for value in data["full_versions"]]
+            ),
+            routed_experts_chunks=routed_experts_chunks,
+            label=data.get("label"),
+            finish_reason=data.get("finish_reason", "stop"),
+            extra_info=data.get("extra_info", {}),
+        )
+
+    def _write_items(self, items: list[TrajectorySegment]) -> None:
+        """Commit a prepared batch while holding one store lock.
+
+        All schema conversion happens before this method is entered.  The
+        snapshots make the remaining in-memory mutation transactional even if
+        an unexpected exception is raised while updating one of the indexes.
+        """
+
+        if not items:
+            return
+        instance_ids = {item.instance_id for item in items}
+        trajectory_ids = {item.trajectory_id for item in items}
+        missing = object()
+        with self._lock:
+            previous_instances = {
+                key: list(self._by_instance[key]) if key in self._by_instance else missing
+                for key in instance_ids
+            }
+            previous_trajectories = {
+                key: (
+                    list(self._by_trajectory[key])
+                    if key in self._by_trajectory
+                    else missing
+                )
+                for key in trajectory_ids
+            }
+            previous_timestamps = {
+                key: self._instance_timestamps.get(key, missing)
+                for key in instance_ids
+            }
+            try:
+                for item in items:
+                    self._by_instance.setdefault(item.instance_id, []).append(item)
+                    self._by_trajectory.setdefault(item.trajectory_id, []).append(item)
+                committed_at = time.time()
+                for instance_id in instance_ids:
+                    self._instance_timestamps[instance_id] = committed_at
+            except BaseException:
+                for key, value in previous_instances.items():
+                    if value is missing:
+                        self._by_instance.pop(key, None)
+                    else:
+                        self._by_instance[key] = value
+                for key, value in previous_trajectories.items():
+                    if value is missing:
+                        self._by_trajectory.pop(key, None)
+                    else:
+                        self._by_trajectory[key] = value
+                for key, value in previous_timestamps.items():
+                    if value is missing:
+                        self._instance_timestamps.pop(key, None)
+                    else:
+                        self._instance_timestamps[key] = value
+                raise
+
+    def write(self, item: TrajectorySegment) -> None:
+        self._write_items([item])
+
+    def write_many(self, records: list[dict]) -> list[TrajectorySegment]:
+        """Validate every record, then atomically publish the complete batch."""
+
+        items = [self._item_from_dict(data) for data in records]
+        self._validate_finalized_batch(items)
+        self._write_items(items)
+        return items
+
+    @classmethod
+    def _validate_finalized_batch(cls, items: list[TrajectorySegment]) -> None:
+        """Validate all views when records declare an atomic finalization."""
+
+        if not items:
+            return
+        marked = any(
+            "finalization_id" in item.extra_info
+            or "finalization_complete" in item.extra_info
+            for item in items
+        )
+        if not marked:
+            return
+
+        finalization_ids = {
+            item.extra_info.get("finalization_id") for item in items
+        }
+        if (
+            len(finalization_ids) != 1
+            or not isinstance(next(iter(finalization_ids)), str)
+            or not next(iter(finalization_ids))
+            or any(
+                item.extra_info.get("finalization_complete") is not True
+                for item in items
+            )
+        ):
+            raise ValueError("finalized trajectory batch has inconsistent markers")
+        if len({item.trajectory_id for item in items}) != 1 or len(
+            {item.instance_id for item in items}
+        ) != 1:
+            raise ValueError("finalized trajectory batch mixes trajectory identities")
+
+        by_view: dict[str, list[TrajectorySegment]] = {}
+        for item in items:
+            view = cls._item_segment_view(item)
+            if view not in {"lineage", "timeline"}:
+                raise ValueError("finalized trajectory batch has invalid segment_view")
+            by_view.setdefault(view, []).append(item)
+        for view, view_items in by_view.items():
+            counts = {item.segment_count for item in view_items}
+            indices = [item.segment_index for item in view_items]
+            if (
+                len(counts) != 1
+                or isinstance(next(iter(counts)), bool)
+                or next(iter(counts)) != len(view_items)
+                or any(isinstance(index, bool) for index in indices)
+                or len(indices) != len(set(indices))
+                or set(indices) != set(range(len(view_items)))
+            ):
+                raise ValueError(
+                    f"finalized trajectory {view} segments are not the complete 0..N-1 set"
+                )
+
+    def write_dict(self, data: dict) -> TrajectorySegment:
+        return self.write_many([data])[0]
+
+    def read_trajectory(
+        self,
+        trajectory_id: str,
+        instance_id: str | None = None,
+        segment_view: str | None = None,
+    ) -> list[dict]:
+        with self._lock:
+            items = self._by_trajectory.get(trajectory_id, [])
+            if instance_id is not None:
+                items = [item for item in items if item.instance_id == instance_id]
+            items = self._filter_segment_view(items, segment_view)
+            items = sorted(items, key=lambda item: (item.segment_index, item.timestamp))
+            return [copy.deepcopy(item.to_dict()) for item in items]
+
+    def pop_trajectory(
+        self,
+        trajectory_id: str,
+        instance_id: str | None = None,
+        segment_view: str | None = None,
+    ) -> list[dict]:
+        """Read and remove finalized segments for one trajectory.
+
+        Exact trajectory reads are used by rollout workers immediately after
+        finalization. Without removal, long-running fully async rollouts keep
+        every completed segment in memory for the lifetime of the proxy.
+        """
+        with self._lock:
+            existing_items = self._by_trajectory.get(trajectory_id, [])
+            if instance_id is None:
+                matched = list(existing_items)
+                remaining_by_trajectory = []
+            else:
+                matched = [
+                    item for item in existing_items if item.instance_id == instance_id
+                ]
+                remaining_by_trajectory = [
+                    item for item in existing_items if item.instance_id != instance_id
+                ]
+
+            if not matched:
+                return []
+
+            returned = self._filter_segment_view(matched, segment_view)
+
+            if remaining_by_trajectory:
+                self._by_trajectory[trajectory_id] = remaining_by_trajectory
+            else:
+                self._by_trajectory.pop(trajectory_id, None)
+
+            matched_uids = {item.uid for item in matched}
+            affected_instances = {item.instance_id for item in matched}
+            for affected_instance_id in affected_instances:
+                remaining_by_instance = [
+                    item
+                    for item in self._by_instance.get(affected_instance_id, [])
+                    if item.uid not in matched_uids
+                ]
+                if remaining_by_instance:
+                    self._by_instance[affected_instance_id] = remaining_by_instance
+                    self._instance_timestamps[affected_instance_id] = time.time()
+                else:
+                    self._by_instance.pop(affected_instance_id, None)
+                    self._instance_timestamps.pop(affected_instance_id, None)
+
+            returned = sorted(
+                returned, key=lambda item: (item.segment_index, item.timestamp)
+            )
+            return [copy.deepcopy(item.to_dict()) for item in returned]
+
+    def read_session(self, session_id: str, instance_id: str | None = None) -> list[dict]:
+        return self.read_trajectory(session_id, instance_id=instance_id)
+
+    def _ready_instances_locked(self) -> dict[str, list[TrajectorySegment]]:
+        now = time.time()
+        ready: dict[str, list[TrajectorySegment]] = {}
+        for instance_id, items in list(self._by_instance.items()):
+            trajectory_count = len({self._trajectory_key(item) for item in items})
+            size_ok = trajectory_count >= self._min_group_size
+            timed_out = (
+                now - self._instance_timestamps.get(instance_id, now)
+            ) > self._group_timeout
+            if size_ok or timed_out:
+                ready[instance_id] = items
+        return ready
+
+    def read_batch(
+        self,
+        max_groups: int | None = None,
+    ) -> list[list[dict]]:
+        with self._lock:
+            ready = self._ready_instances_locked()
+            if not ready:
+                return []
+
+            instance_ids = list(ready.keys())
+            if max_groups is not None:
+                instance_ids = instance_ids[:max_groups]
+
+            groups: list[list[dict]] = []
+            for instance_id in instance_ids:
+                items = sorted(
+                    self._by_instance.pop(instance_id),
+                    key=lambda item: (item.trajectory_id, item.segment_index, item.timestamp),
+                )
+                for item in items:
+                    trajectory_items = self._by_trajectory.get(item.trajectory_id, [])
+                    trajectory_items = [
+                        existing for existing in trajectory_items if existing.uid != item.uid
+                    ]
+                    if trajectory_items:
+                        self._by_trajectory[item.trajectory_id] = trajectory_items
+                else:
+                    self._by_trajectory.pop(item.trajectory_id, None)
+                self._instance_timestamps.pop(instance_id, None)
+                by_trajectory: dict[str, list[TrajectorySegment]] = {}
+                for item in items:
+                    by_trajectory.setdefault(item.trajectory_id, []).append(item)
+                default_items: list[TrajectorySegment] = []
+                for trajectory_items in by_trajectory.values():
+                    default_items.extend(self._filter_segment_view(trajectory_items, None))
+                default_items = sorted(
+                    default_items,
+                    key=lambda item: (
+                        item.trajectory_id,
+                        item.segment_index,
+                        item.timestamp,
+                    ),
+                )
+                groups.append([copy.deepcopy(item.to_dict()) for item in default_items])
+            return groups
+
+    def stats(self) -> dict:
+        with self._lock:
+            return {
+                "total_items": sum(len(items) for items in self._by_instance.values()),
+                "total_instances": len(self._by_instance),
+                "ready_instances": len(self._ready_instances_locked()),
+            }

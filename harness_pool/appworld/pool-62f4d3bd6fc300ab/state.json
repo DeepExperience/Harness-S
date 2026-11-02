@@ -1,0 +1,279 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "on_error"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [
+    {
+      "action": "warn",
+      "condition": "duplicate_call_gte",
+      "event": "after_tool",
+      "id": "duplicate-execute-guidance",
+      "message": "The same execute call repeated. Use its observed result or change the next call; when a broad API listing is empty, print the catalog and inspect a specific candidate API with api_docs.show_api_doc rather than repeating the listing.",
+      "parameters": {
+        "threshold": 2
+      }
+    },
+    {
+      "action": "normalize_error",
+      "condition": "last_error_is",
+      "event": "after_tool",
+      "id": "schema-error-recovery",
+      "message": "A schema error occurred. Reopen the exact API schema, correct parameter names, types, required fields, or response extraction, and retry once with the corrected call; do not repeat the same arguments.",
+      "parameters": {
+        "kind": "schema_422"
+      }
+    },
+    {
+      "action": "normalize_error",
+      "condition": "last_error_is",
+      "event": "after_tool",
+      "id": "authentication-error-recovery",
+      "message": "An authentication error occurred. Verify the app-specific login identifier, extract the access token from the login response, and pass only that token to the protected call; do not reuse the whole login object.",
+      "parameters": {
+        "kind": "authentication_401"
+      }
+    },
+    {
+      "action": "normalize_error",
+      "condition": "last_error_is",
+      "event": "after_tool",
+      "id": "local-error-recovery",
+      "message": "A local execution error occurred. Read the complete exception, fix the exact variable or API name, and continue with the corrected operation; do not repeat identical code.",
+      "parameters": {
+        "kind": "python_or_api_exception"
+      }
+    },
+    {
+      "action": "warn",
+      "condition": "pagination_present",
+      "event": "after_tool",
+      "id": "pagination-completion-guidance",
+      "message": "Pagination metadata is present. Continue only until an empty or short page or an authoritative total; do not treat the first page as complete.",
+      "parameters": {}
+    }
+  ],
+  "memory": {
+    "enabled": true,
+    "fields": [
+      {
+        "clear": "episode_start",
+        "extractor": "schema_error",
+        "name": "schema_error",
+        "render_label": "Last schema error",
+        "type": "string"
+      },
+      {
+        "clear": "episode_start",
+        "extractor": "authenticated_apps",
+        "name": "authenticated_apps",
+        "render_label": "Authenticated apps",
+        "type": "string_list"
+      }
+    ]
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        {
+          "observation": "The run expected a success wrapper, treated the direct list as an error, and stopped pagination after page 0.",
+          "scorer_evidence_ids": [
+            "score-c9175890f1aed28140941491",
+            "score-a296fffc61e52b1f06a01611",
+            "score-bd4575c2622ccb4a85dfe297",
+            "score-f8da5ec02ad6d94ccad17f21",
+            "score-f04f61a9ef265a2966a6745c",
+            "score-c9d034d4747de088c2a57efa"
+          ],
+          "step_ids": [
+            10,
+            11,
+            23,
+            26,
+            29,
+            31
+          ],
+          "trajectory_id": "d18139b_1::g0:framework-round-3-parent-evidence-P1-015e9505b9f3:864706"
+        },
+        {
+          "observation": "Only the first page of playlists was inspected, so later playlists and their songs were missed.",
+          "scorer_evidence_ids": [
+            "score-979566647b0b919c7bef2b3c",
+            "score-2423ad8bb33b3fc25c436226",
+            "score-7e1719ac7512061ceadb344d",
+            "score-136ca61d09e88bc64fd204c8"
+          ],
+          "step_ids": [
+            29,
+            38,
+            44,
+            56,
+            62
+          ],
+          "trajectory_id": "634f342_2::g0:framework-round-3-parent-evidence-P1-015e9505b9f3:64250"
+        },
+        {
+          "observation": "The API description call did not print its return value, so the agent guessed API names until the budget ended.",
+          "scorer_evidence_ids": [
+            "score-081c72777052b95449a09dc7",
+            "score-a296fffc61e52b1f06a01611",
+            "score-85531599eecd2472466c9045"
+          ],
+          "step_ids": [
+            6,
+            8,
+            9,
+            11,
+            92,
+            95
+          ],
+          "trajectory_id": "59bcfc8_2::g0:framework-round-3-parent-evidence-P1-015e9505b9f3:782218"
+        },
+        {
+          "observation": "The successful control read the exact schemas, paginated to an empty page, and only then filtered and mutated.",
+          "step_ids": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            24,
+            25,
+            26,
+            27,
+            30
+          ],
+          "trajectory_id": "e3d6c94_2::g0:framework-round-3-parent-evidence-P1-015e9505b9f3:807174"
+        }
+      ],
+      "rule_id": "contract-normalization",
+      "slot": "action_guidance",
+      "text": "Use mcp__environment__execute for every AppWorld action; AppWorld APIs are Python inside its code parameter, never separate tool names. Choose apps directly from task nouns, print the exact schema before an unfamiliar API call, and print every result used for a decision; an unprinted return value is unavailable. Treat a direct list as data. Before using a collection API, read its schema; if it documents page_index or page_limit, fetch the next page whenever a page contains exactly page_limit results and stop only at an empty or short page or an authoritative total. If an unsupported filter returns an empty or unchanged default list, reread the schema and change strategy; do not brute-force entity IDs. Refresh a mutable collection before mutation; when removal uses positions, remove target positions in descending order or recompute after each removal. Preserve resolved entities and contracts."
+    },
+    {
+      "evidence": [
+        {
+          "observation": "A stale first-page spam list was reused after unspam actions, so later spam threads were missed.",
+          "scorer_evidence_ids": [
+            "score-7e80e71982147d20b5320ce9",
+            "score-90268a048044ad972f4b1cb5",
+            "score-169bffc2588c29e7a7745ccd",
+            "score-0131e8ebf0e4fb2b58bb1392",
+            "score-9e644379a56aff2ed2e67ab4"
+          ],
+          "step_ids": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33
+          ],
+          "trajectory_id": "ac62177_3::g0:framework-round-3-parent-evidence-P1-015e9505b9f3:523428"
+        },
+        {
+          "observation": "Mutable queue positions were not refreshed after earlier removals, causing repeated schema errors and an incomplete final queue.",
+          "scorer_evidence_ids": [
+            "score-660b3ae3d47598aac0c470d9",
+            "score-f2309d59a0dfbabf197a4dc1"
+          ],
+          "step_ids": [
+            11,
+            14,
+            21,
+            22,
+            23,
+            26,
+            29,
+            30,
+            31,
+            32,
+            35,
+            36,
+            47,
+            48,
+            49,
+            50,
+            53,
+            54,
+            55,
+            56,
+            59,
+            69,
+            70,
+            71,
+            74
+          ],
+          "trajectory_id": "fd1f8fa_2::g0:framework-round-3-parent-evidence-P1-015e9505b9f3:586896"
+        },
+        {
+          "observation": "The successful control removed unrelated cart entries, re-read the cart, and changed payment cards after an expired-card error.",
+          "scorer_evidence_ids": [
+            "score-f3b624fba5dbe1c710a5c37d",
+            "score-ebc33535cb456ca67cae7104",
+            "score-57f9cab467ca461f859b9dfd",
+            "score-fbf616ae8a3ba68b420d37d6"
+          ],
+          "step_ids": [
+            54,
+            55,
+            56,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68
+          ],
+          "trajectory_id": "f6be291_3::g0:framework-round-3-parent-evidence-P1-015e9505b9f3:214591"
+        }
+      ],
+      "rule_id": "operation-semantics",
+      "slot": "action_guidance",
+      "text": "Before the first state-changing money or record operation, resolve the operation, relationship predicate, and exact affected set from documentation and observed task evidence. Do not infer that every sender, participant, or thread belongs to a requested group; identify roommates, coworkers, relatives, or other relationships from authoritative data. For money, distinguish completed transfers from requests, inspect transaction history, and use the operation-specific API. For records and carts, enumerate all matching evidence, remove unrelated existing entries before ordering or deletion, prefer in-place update or disable, and use documented delete/create only when replacement is required. If the affected set, relationship, or API remains unresolved, stop rather than broadening the mutation. Bypass this rule for read-only work or already unambiguous operations."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [],
+  "tool_view": {
+    "description_suffix": "Use mcp__environment__execute for all AppWorld work. Print exact schemas and used results, target apps from task nouns, finish documented pagination, and refresh mutable state before acting.",
+    "error_normalization": false,
+    "examples": [
+      "Call only mcp__environment__execute. Put AppWorld Python in its code parameter, print the schema before an unfamiliar call, and print every result used for a decision.",
+      "If a collection schema documents page_index or page_limit, fetch the next page whenever a page contains exactly page_limit results; stop only at an empty or short page or an authoritative total.",
+      "Choose apps from task nouns, use only documented filters, and change strategy after an unchanged default result; do not enumerate unrelated apps or brute-force entity IDs.",
+      "Refresh mutable collections before mutation. When removal uses positions, remove in descending order or recompute after each removal; preserve already-resolved entities and contracts."
+    ],
+    "helper_tool": false
+  }
+}

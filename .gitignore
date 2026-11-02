@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+outputs/
+models/
+checkpoints/
+third_party/slime/
+runtime/dsh/node_modules/
+runtime/dsh/package-lock.json
+*.log

@@ -1,0 +1,10 @@
+.git
+.env
+.env.*
+outputs
+models
+checkpoints
+.venv
+**/__pycache__
+runtime/dsh/node_modules
+third_party/slime

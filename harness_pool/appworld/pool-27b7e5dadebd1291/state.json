@@ -1,0 +1,60 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        "R5",
+        "R6"
+      ],
+      "rule_id": "late-stage-evidence-and-completion",
+      "slot": "action_guidance",
+      "text": "Use mcp__environment__execute for every AppWorld operation. Before treating a list or search result as complete evidence or using it to choose mutation targets, inspect its endpoint documentation inside that Python call for page_index and page_limit. Preserve useful filters, request a bounded larger page, and continue until an empty page or another explicit exhaustion signal; do not infer completeness from a default-sized first page. Before completion, verify the requested state and classify the task: pass only a concise answer for an explicit question and omit the answer for a side-effect-only state change."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [
+    {
+      "body": "1. Use mcp__environment__execute for every AppWorld operation. Never call apis.api_docs or an app API as a separate tool.\n2. Decide whether the result will support exhaustive evidence or select mutation targets. If a single targeted match is sufficient, the collection is already explicitly exhausted, or the endpoint documentation shows no pagination, use the result directly.\n3. Inside the execute Python block, inspect paginated endpoint documentation for page_index and page_limit. Preserve useful filters and query constraints.\n4. Request a bounded larger page within the documented maximum. Continue page_index until an empty page or another explicit exhaustion signal. Do not treat a default-sized first page as complete.\n5. Accumulate results across pages and use the complete accumulated set only after exhaustion. Stop once exhaustion is explicit; do not add unnecessary reads.\n6. If a call returns 422, inspect the exact API schema inside execute and correct parameter names, types, or required fields before retry; do not repeat identical failing code.\n7. Before complete_task, verify the requested state with an ordinary documented read API when needed. Classify the task. For an explicit question, pass only the concise requested answer. For a side-effect-only state change, omit the answer argument. If the task is genuinely unsolvable, use the documented failure status.",
+      "description": "Check paginated collections for explicit exhaustion and match completion answers to task type.",
+      "evidence": [
+        "R5",
+        "R6"
+      ],
+      "name": "collection-exhaustion-completion",
+      "when_to_use": "Use once when a paginated collection must be exhaustive or immediately before complete_task; do not reload it."
+    }
+  ],
+  "tool_view": {
+    "description_suffix": "All AppWorld documentation and API calls belong inside mcp__environment__execute. For paginated list or search endpoints used as complete evidence or mutation targets, establish explicit exhaustion before use. Before completion, verify state and match the answer to the task type.",
+    "error_normalization": false,
+    "examples": [
+      "Tool-call safety: call mcp__environment__execute with Python code; never call apis.api_docs or an app API as a separate tool. After a 422, inspect the exact API schema and correct parameter names or types before retry.",
+      "Paginated collection read: inside execute, inspect endpoint documentation; if page_index and page_limit exist, preserve useful filters, request a bounded larger page, and continue until an empty page or explicit exhaustion signal. Use the accumulated result only after exhaustion.",
+      "Completion typing: verify the requested state, then classify the task. Pass only the concise requested answer for an explicit question; omit the answer argument for a side-effect-only state change."
+    ],
+    "helper_tool": false
+  }
+}

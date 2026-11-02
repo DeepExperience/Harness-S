@@ -1,0 +1,84 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [
+    {
+      "action": "warn",
+      "condition": "last_error_is",
+      "event": "after_tool",
+      "id": "recover-unknown-tool",
+      "message": "For an unknown AppWorld API or print tool name, use mcp__environment__execute and place the Python call inside its code argument; do not call apis.* or print(...) as a separate tool.",
+      "parameters": {
+        "kind": "tool_error"
+      }
+    }
+  ],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        "383a053_3::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:20659",
+        "4242c97_1::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:878534",
+        "7238049_3::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:150886",
+        "a5b0084_2::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:528984",
+        "20c1328_3::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:68778",
+        "c9458ed_1::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:127632"
+      ],
+      "rule_id": "reconcile-before-side-effect",
+      "slot": "action_guidance",
+      "text": "Before an irreversible Amazon order or account mutation, reconcile current mutable state with documented reads: inspect the cart, remove anything not requested, add only the requested products and quantities, and validate inventory, price, delivery, payment, and applicable discount constraints. If an operation sends or requires a one-time code, inspect the indicated email or text-message source, paginate until an empty page, and use only the retrieved code; do not guess or retry unvalidated candidates. After the side effect, verify the resulting order or account state before completion. For read-only work or already-clean state, proceed without unnecessary discovery."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [
+    {
+      "body": "Procedure:\n1. Use mcp__environment__execute, not a direct apis.* tool call. Its code argument is Python; for example, print(apis.api_docs.show_app_descriptions()) or print(apis.api_docs.show_api_doc(app_name='...', api_name='...')).\n2. Read the printed app-level descriptions and exact endpoint schema. Do not infer documentation is absent from a heading or an unprinted return value.\n3. Record supported parameters, required fields, response shape, and pagination. Use only documented filters.\n4. If a target is absent from the first page, advance through documented pagination rather than repeating the same call or guessing IDs.\n5. Before a side effect, compare generic and relation-specific operations. Choose the operation that matches the source object's scope and lifecycle, such as updating or consuming an existing email, thread, or draft rather than creating a new object.\n6. Verify the resulting state with documented reads before completion.\nStop early when the contract and target object are already resolved; do not force rediscovery.",
+      "description": "Resolve AppWorld API contracts through the environment execute tool before selecting or calling an endpoint, especially when documentation output is silent or a generic operation could replace a relation-specific one.",
+      "evidence": [
+        "59fae45_1::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:323027",
+        "8d42650_1::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:831950",
+        "b08d5ef_3::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:424322",
+        "96bf160_1::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:879921",
+        "ffe6d5e_2::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:672173",
+        "bcb9696_3::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:305310",
+        "ce73d68_1::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:397710",
+        "e3d6c94_3::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:209598",
+        "18670a5_1::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:763615",
+        "a132254_2::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:851743",
+        "f99d726_3::g0:framework-round-2-parent-evidence-P3-60bd9a93b1b3:308842"
+      ],
+      "name": "contract-preflight",
+      "when_to_use": "Use before first relying on an unfamiliar app or endpoint, after a documentation call renders no useful output, or before choosing between generic and relation-specific operations. Stop once the exact contract and target object are already resolved."
+    }
+  ],
+  "tool_view": {
+    "description_suffix": "",
+    "error_normalization": false,
+    "examples": [
+      "Before an Amazon order, inspect the current cart. If it contains anything not requested, clear it, add only the requested products and quantities, then re-inspect before ordering.",
+      "When an operation says it sent a code, inspect the indicated email or text-message source and paginate until an empty page before using the code; never guess or retry an unvalidated candidate.",
+      "Use mcp__environment__execute for AppWorld APIs: its code argument is Python. Before a filtered search, run code such as print(apis.api_docs.show_api_doc(app_name='...', api_name='...')) and use only documented parameters; never call apis.* or print(...) as a separate tool."
+    ],
+    "helper_tool": false
+  }
+}

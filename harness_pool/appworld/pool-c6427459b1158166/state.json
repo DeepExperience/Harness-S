@@ -1,0 +1,72 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        "2a163ab_3::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:798513",
+        "afc0fce_1::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:385171",
+        "321ec38_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:934281",
+        "60d0b5b_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:197139",
+        "b6d1104_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:275923",
+        "b9c5c9a_3::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:150832",
+        "d18139b_1::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:864706",
+        "d4e9306_3::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:899822",
+        "d8e490b_3::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:187017",
+        "e201314_1::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:537732",
+        "ec655df_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:368255",
+        "f3a6713_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:794351",
+        "afc0fce_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:487037",
+        "eb5ad85_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:234243"
+      ],
+      "rule_id": "boundary-completion",
+      "slot": "action_guidance",
+      "text": "Before treating a list, relationship set, category, or relative-time window as exhaustive, verify its authoritative boundary. Read or reuse the relevant API documentation, use the maximum permitted page size, continue only until an empty page, short page, documented terminal condition, or definitive filter boundary, obtain the current date for a relative window, and verify the exact target set before side effects. Stop once the target is resolved."
+    },
+    {
+      "evidence": [
+        "07b42fd_1::g0:framework-round-1-codex-local-C1-v1-fda3bc0f1582:546676",
+        "20c1328_3::g0:framework-round-1-codex-local-C1-v1-fda3bc0f1582:68778",
+        "66b7899_2::g0:framework-round-1-codex-local-C1-v1-fda3bc0f1582:461193",
+        "66b7899_3::g0:framework-round-1-codex-local-C1-v1-fda3bc0f1582:488275",
+        "b9c5c9a_2::g0:framework-round-1-codex-local-C1-v1-fda3bc0f1582:328031",
+        "07b42fd_1::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:546676",
+        "66b7899_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:461193",
+        "b9c5c9a_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:328031"
+      ],
+      "rule_id": "completion-boundary",
+      "slot": "completion_guidance",
+      "text": "Before completing, verify the exact target set, latest per-entity state, and answer format. If a required boundary is unresolved, inspect the authoritative source; otherwise stop. Omit the answer for side-effect tasks and return only the requested concise value for information tasks."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [],
+  "tool_view": {
+    "description_suffix": "Before treating a list, relationship set, category, or relative-time result as exhaustive, verify the documented pagination or filter boundary and current date; stop once the exact target is resolved.",
+    "error_normalization": false,
+    "examples": [],
+    "helper_tool": false
+  }
+}

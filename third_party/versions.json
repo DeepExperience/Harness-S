@@ -1,0 +1,14 @@
+{
+  "dressage": {
+    "url": "https://github.com/Accio-Lab/Dressage",
+    "commit": "fdebfa506e8033f7d8a1b5f5b10fd2d6a84ed735"
+  },
+  "slime": {
+    "url": "https://github.com/THUDM/slime.git",
+    "commit": "fb42ae456fac8166afb604f13b30d22bb3c75053"
+  },
+  "dsh": {
+    "npm": "@deepseek-ai/dsh",
+    "version": "0.1.0-rc.7"
+  }
+}

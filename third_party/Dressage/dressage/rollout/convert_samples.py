@@ -1,0 +1,375 @@
+"""Custom ``_convert_samples_to_train_data`` for Dressage multi-segment.
+
+Registered via ``--custom-convert-samples-to-train-data-path``.
+
+This file is an intentional near-verbatim copy of
+``slime.ray.rollout.RolloutManager._convert_samples_to_train_data``
+(current slime, ``slime/ray/rollout.py``).  Its training-semantic delta is
+the ``rollout_mask_sums`` computation: when the estimator is GRPO /
+Reinforce++ baseline, we substitute prompt-equal denominators
+(``M_P × N_P / gbs``) for slime's default trajectory-equal per-rollout mask
+totals.  MOPD also encodes its per-sample teacher route in slime's existing
+train-side ``prompt`` passthrough slot.
+
+When updating slime, diff this file against the new
+``_convert_samples_to_train_data`` and carry over any additions.
+"""
+
+from __future__ import annotations
+
+import os
+from typing import Any
+
+import numpy as np
+
+from dressage.transport import TQ_SAMPLE_REF_METADATA_KEY
+from dressage.training.grpo_algorithm import enabled as group_only_grpo
+from dressage.training.grpo_algorithm import legacy_enabled as legacy_grpo
+
+_PROMPT_EQUAL_ESTIMATORS = ("grpo", "reinforce_plus_plus_baseline")
+
+
+def _partial_final_batch_enabled() -> bool:
+    return os.environ.get("DRESSAGE_ALLOW_PARTIAL_FINAL_BATCH", "0").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
+def _prompt_equal_rollout_mask_sums(
+    args: Any,
+    samples: list,
+    loss_masks: list[list[int]],
+) -> list[float]:
+    """Prompt-equal denominators for ``rollout_mask_sums``.
+
+    Each sample's denom is ``M_P × N_P / gbs`` where:
+      - M_P = total mask-sum across all samples belonging to prompt P
+      - N_P = number of prompts with at least one live sample
+      - gbs = global_batch_size
+
+    Dead samples (``remove_sample=True``) are excluded from M_P and N_P.
+    Their loss_mask is zeroed upstream, so they contribute 0 to loss
+    regardless of denom.
+    """
+    prompt_token_counts: dict[str, int] = {}
+    real_prompt_ids: set[str] = set()
+
+    for i, sample in enumerate(samples):
+        metadata = getattr(sample, "metadata", None) or {}
+        ptid = metadata.get("parent_traj_id")
+        pid = metadata.get("instance_id")
+        is_dead = bool(getattr(sample, "remove_sample", False))
+
+        assert ptid is not None, (
+            f"sample at index {getattr(sample, 'index', '?')} has no "
+            "metadata['parent_traj_id']; multi-segment training requires this."
+        )
+        assert pid is not None, (
+            f"sample at index {getattr(sample, 'index', '?')} has no "
+            "metadata['instance_id']; prompt-equal aggregation requires this."
+        )
+        if not is_dead:
+            assert getattr(sample, "group_index", None) is not None, (
+                f"real sample at index {getattr(sample, 'index', '?')} "
+                f"(instance_id={pid!r}) has group_index=None; the _NONE_GROUP "
+                "sentinel reserved for dead samples would contaminate its "
+                "advantage."
+            )
+
+        from dressage.rollout.case_failure import is_case_failure_no_grad
+        if is_case_failure_no_grad(sample):
+            real_prompt_ids.add(str(pid))
+        if not is_dead:
+            real_prompt_ids.add(str(pid))
+            prompt_token_counts[str(pid)] = prompt_token_counts.get(str(pid), 0) + sum(
+                loss_masks[i]
+            )
+
+    prompt_count = len(real_prompt_ids)
+    gbs = int(getattr(args, "global_batch_size", 0))
+    if _partial_final_batch_enabled():
+        # A strict final task batch can contain fewer trajectories than the
+        # configured full-step GBS. The train-side scheduler reports that
+        # effective count to Megatron, so the prompt-equal denominator must
+        # use the same value or the tail step would be over-scaled.
+        actual_rollouts = {
+            getattr(sample, "rollout_id", None)
+            for sample in samples
+            if not bool(getattr(sample, "remove_sample", False))
+        }
+        actual_rollouts.discard(None)
+        if actual_rollouts:
+            gbs = min(gbs, len(actual_rollouts))
+    scale = prompt_count / gbs if gbs > 0 and prompt_count > 0 else 0.0
+
+    result: list[float] = []
+    for sample in samples:
+        metadata = getattr(sample, "metadata", None) or {}
+        pid = str(metadata.get("instance_id", ""))
+        result.append(float(prompt_token_counts.get(pid, 0)) * scale)
+    return result
+
+
+def _harness_equal_rollout_mask_sums(
+    args: Any,
+    samples: list,
+    loss_masks: list[list[int]],
+    expected_harnesses: tuple[str, ...],
+) -> list[float]:
+    """Make every (task, harness) contribute equally despite segment length.
+
+    The outer Slime reducer divides by global_batch_size.  Giving every
+    segment in a (task, harness) cell denominator
+    ``M_cell * (num_tasks * num_harnesses / gbs)`` therefore yields an exact
+    mean over task/harness cells after the outer division.
+    """
+
+    cell_token_counts: dict[tuple[str, str], int] = {}
+    task_harnesses: dict[str, set[str]] = {}
+    for index, sample in enumerate(samples):
+        if bool(getattr(sample, "remove_sample", False)):
+            continue
+        metadata = getattr(sample, "metadata", None) or {}
+        task_id = str(metadata.get("task_id") or metadata.get("instance_id") or "")
+        harness_id = str(metadata.get("harness_id") or "")
+        if not task_id or not harness_id:
+            raise ValueError("Harness-equal loss requires task_id and harness_id metadata")
+        key = (task_id, harness_id)
+        cell_token_counts[key] = cell_token_counts.get(key, 0) + sum(loss_masks[index])
+        task_harnesses.setdefault(task_id, set()).add(harness_id)
+
+    expected_set = set(expected_harnesses)
+    for task_id, actual in task_harnesses.items():
+        if actual != expected_set:
+            raise ValueError(
+                f"Harness-equal loss saw incomplete task {task_id}: "
+                f"expected={sorted(expected_set)} actual={sorted(actual)}"
+            )
+    num_tasks = len(task_harnesses)
+    num_harnesses = len(expected_harnesses)
+    gbs = int(getattr(args, "global_batch_size", 0))
+    if num_tasks == 0 or gbs <= 0:
+        raise ValueError("Harness-equal loss requires live tasks and positive global_batch_size")
+    scale = (num_tasks * num_harnesses) / gbs
+
+    result: list[float] = []
+    for sample in samples:
+        if bool(getattr(sample, "remove_sample", False)):
+            result.append(0.0)
+            continue
+        metadata = getattr(sample, "metadata", None) or {}
+        task_id = str(metadata.get("task_id") or metadata.get("instance_id") or "")
+        harness_id = str(metadata.get("harness_id") or "")
+        result.append(float(cell_token_counts[(task_id, harness_id)]) * scale)
+    return result
+
+
+def convert_samples_to_train_data(args: Any, samples: list) -> dict:
+    """Dressage replacement for ``RolloutManager._convert_samples_to_train_data``."""
+    from dressage.training.reward_post_process import reward_post_process
+
+    raw_rewards, rewards = reward_post_process(args, samples)
+
+    assert len(raw_rewards) == len(samples)
+    assert len(rewards) == len(samples)
+
+    rollout_ids = [sample.rollout_id for sample in samples]
+    existed_rollout_id_values = set(rid for rid in rollout_ids if rid is not None)
+    tmp_id = 0
+    for i in range(len(rollout_ids)):
+        if rollout_ids[i] is None:
+            while tmp_id in existed_rollout_id_values:
+                tmp_id += 1
+            rollout_ids[i] = tmp_id
+            existed_rollout_id_values.add(tmp_id)
+
+    train_data = {
+        "tokens": [sample.tokens for sample in samples],
+        "response_lengths": [sample.response_length for sample in samples],
+        # some reward model, e.g. remote rm, may return multiple rewards,
+        # we could use key to select the reward.
+        "rewards": rewards,
+        "raw_reward": raw_rewards,
+        "truncated": [
+            1 if sample.status == sample.Status.TRUNCATED else 0 for sample in samples
+        ],
+        "sample_indices": [sample.index for sample in samples],
+        "rollout_ids": rollout_ids,
+    }
+    tq_layouts = [
+        (sample.metadata or {}).get(TQ_SAMPLE_REF_METADATA_KEY)
+        for sample in samples
+    ]
+    tq_remote_fields = {
+        field
+        for layouts in tq_layouts
+        if layouts is not None
+        for field in layouts
+    }
+    for sample, layouts in zip(samples, tq_layouts, strict=True):
+        sample_fields = set(layouts or {})
+        missing_fields = tq_remote_fields.difference(sample_fields)
+        if missing_fields and not bool(getattr(sample, "remove_sample", False)):
+            raise ValueError(
+                "TransferQueue fields cannot mix actual values and layouts in "
+                f"one batch: {', '.join(sorted(missing_fields))}"
+            )
+
+    # loss mask
+    # TODO: compress the loss mask
+    loss_masks = []
+    for sample in samples:
+        # always instantiate loss_mask if not provided
+        if sample.loss_mask is None:
+            sample.loss_mask = [1] * sample.response_length
+
+        assert (
+            len(sample.loss_mask) == sample.response_length
+        ), f"loss mask length {len(sample.loss_mask)} != response length {sample.response_length}"
+        if sample.remove_sample:
+            sample.loss_mask = [0] * sample.response_length
+        loss_masks.append(sample.loss_mask)
+    train_data["loss_masks"] = loss_masks
+
+    # Per-rollout aggregate, precomputed at the step level (where we can
+    # see every sample of every rollout) and broadcast per-sample so the
+    # per-mb loss reducer uses the correct whole-rollout denominator even
+    # when a rollout's samples land in different micro-batches (first-fit
+    # packing can split a rollout across mbs):
+    #
+    #   ``rollout_mask_sums[i]`` — sum of loss-mask totals over every
+    #   sample in sample i's rollout. Used as the reducer's denominator
+    #   so summing partial contributions across mbs yields one
+    #   token-weighted mean per rollout.
+    rollout_id_list = train_data["rollout_ids"]
+    mask_sums_per_sample = [sum(m) for m in loss_masks]
+    from dressage.training.reward_post_process import cross_harness_config
+
+    paired_config = cross_harness_config()
+    mixed = getattr(args, "harness_mix", "active_only") in {"h0_active_equal", "pool_equal", "router_topk", "pool_weighted"}
+    if mixed and paired_config is not None:
+        raise ValueError("dynamic mixed GRPO must not use legacy coupled advantages/loss")
+    if paired_config is not None:
+        _, expected_harnesses, _ = paired_config
+        train_data["rollout_mask_sums"] = _harness_equal_rollout_mask_sums(
+            args,
+            samples,
+            loss_masks,
+            expected_harnesses,
+        )
+    elif ((legacy_grpo() or not mixed) and getattr(args, "advantage_estimator", None) in _PROMPT_EQUAL_ESTIMATORS
+          and not group_only_grpo()):
+        train_data["rollout_mask_sums"] = _prompt_equal_rollout_mask_sums(
+            args,
+            samples,
+            loss_masks,
+        )
+    else:
+        # Dynamic H0x4 + activex4: each complete trajectory has weight 1/G,
+        # regardless of Harness verbosity or the number of context segments.
+        # The outer reducer divides by B*G. Legacy GRPO remains prompt-equal.
+        rollout_total_mask: dict[int, int] = {}
+        for rid, ms in zip(rollout_id_list, mask_sums_per_sample, strict=True):
+            rollout_total_mask[rid] = rollout_total_mask.get(rid, 0) + ms
+        train_data["rollout_mask_sums"] = [
+            rollout_total_mask[rid] for rid in rollout_id_list
+        ]
+
+    # Overwrite raw_reward when available. Mixed-source batches may only
+    # populate this field for a subset of samples (e.g. SWE but not code).
+    if any(sample.metadata and "raw_reward" in sample.metadata for sample in samples):
+        train_data["raw_reward"] = [
+            (
+                sample.metadata["raw_reward"]
+                if sample.metadata and "raw_reward" in sample.metadata
+                else sample.reward
+            )
+            for sample in samples
+        ]
+
+    # For rollout buffer
+    if samples[0].metadata and "round_number" in samples[0].metadata:
+        train_data["round_number"] = [
+            sample.metadata["round_number"] for sample in samples
+        ]
+
+    # Add rollout log probabilities for off-policy correction
+    if (
+        "full_logprobs" not in tq_remote_fields
+        and samples[0].rollout_log_probs is not None
+    ):
+        train_data["rollout_log_probs"] = [
+            sample.rollout_log_probs for sample in samples
+        ]
+
+    if (
+        getattr(args, "use_rollout_routing_replay", False)
+        and "routed_experts" not in tq_remote_fields
+    ):
+        routed_experts = []
+        for sample in samples:
+            value = sample.rollout_routed_experts
+            if value is None and sample.remove_sample:
+                value = np.zeros(
+                    (
+                        len(sample.tokens) - 1,
+                        args.num_layers,
+                        args.moe_router_topk,
+                    ),
+                    dtype=np.int32,
+                )
+            routed_experts.append(value)
+        train_data["rollout_routed_experts"] = routed_experts
+    elif (
+        "routed_experts" not in tq_remote_fields
+        and samples[0].rollout_routed_experts is not None
+    ):
+        train_data["rollout_routed_experts"] = [
+            sample.rollout_routed_experts for sample in samples
+        ]
+
+    if samples[0].train_metadata is not None:
+        train_data["metadata"] = [sample.train_metadata for sample in samples]
+
+    if any(sample.multimodal_train_inputs is not None for sample in samples):
+        train_data["multimodal_train_inputs"] = [
+            sample.multimodal_train_inputs for sample in samples
+        ]
+
+    config_path = getattr(args, "mopd_teacher_config", None) or os.environ.get(
+        "DRESSAGE_MOPD_TEACHER_CONFIG"
+    )
+    if tq_remote_fields and config_path:
+        raise ValueError("TransferQueue and MOPD cannot share train_data['prompt']")
+    if tq_remote_fields:
+        train_data["prompt"] = tq_layouts
+    elif config_path:
+        if (
+            not bool(getattr(args, "use_opd", False))
+            or getattr(args, "opd_type", None) != "megatron"
+        ):
+            raise ValueError(
+                "MOPD train conversion requires --use-opd --opd-type megatron"
+            )
+        from dressage.rollout.mopd import (
+            collect_mopd_teacher_ids,
+            load_mopd_config,
+        )
+
+        teacher_ids = collect_mopd_teacher_ids(
+            samples, load_mopd_config(str(config_path))
+        )
+
+        # Slime already DP-partitions and forwards this train-side field.  It
+        # is deliberately not Sample.prompt: rollout generation and tokenization
+        # are complete before this converter runs.
+        train_data["prompt"] = teacher_ids
+    elif samples[0].teacher_log_probs is not None:
+        train_data["teacher_log_probs"] = [
+            sample.teacher_log_probs for sample in samples
+        ]
+
+    return train_data

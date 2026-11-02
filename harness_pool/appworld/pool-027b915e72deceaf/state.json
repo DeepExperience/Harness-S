@@ -1,0 +1,52 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        "383a053_3::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:20659",
+        "4242c97_1::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:878534",
+        "7238049_3::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:150886",
+        "a5b0084_2::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:528984",
+        "20c1328_3::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:68778",
+        "c9458ed_1::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:127632"
+      ],
+      "rule_id": "reconcile-before-side-effect",
+      "slot": "action_guidance",
+      "text": "Before an irreversible Amazon order or account mutation, reconcile current mutable state with documented reads: inspect the cart, remove anything not requested, add only the requested products and quantities, and validate inventory, price, delivery, payment, and applicable discount constraints. If an operation sends or requires a one-time code, inspect the indicated email or text-message source, paginate until an empty page, and use only the retrieved code; do not guess or retry unvalidated candidates. After the side effect, verify the resulting order or account state before completion. For read-only work or already-clean state, proceed without unnecessary discovery."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [],
+  "tool_view": {
+    "description_suffix": "",
+    "error_normalization": false,
+    "examples": [
+      "Before an Amazon order, inspect the current cart. If it contains anything not requested, clear it, add only the requested products and quantities, then re-inspect before ordering.",
+      "When an operation says it sent a code, inspect the indicated email or text-message source and paginate until an empty page before using the code; never guess or retry an unvalidated candidate."
+    ],
+    "helper_tool": false
+  }
+}

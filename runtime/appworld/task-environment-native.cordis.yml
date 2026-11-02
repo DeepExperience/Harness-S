@@ -1,0 +1,76 @@
+# Task-environment layer for CPU-light embodied/API rollouts.
+#
+# This patch is applied after model-proxy.cordis.yml and
+# standard-core-native.cordis.yml.  It keeps the DSH agent loop, context
+# management, tool history and native tool calling, but replaces the coding
+# surface with one task-scoped MCP server.  The server process receives only
+# the explicitly listed task variables below.
+
+- id: system-prompt
+  config:
+    persona: >-
+      You are an autonomous task-solving agent. Work only through the
+      mcp__environment__* tools exposed for this episode. Read every tool
+      result carefully, make one purposeful environment action at a time, and
+      stop as soon as the task is complete. Never use shell, filesystem,
+      network, hidden evaluator, ground-truth, or external side channels.
+
+# Repository instructions are unrelated to the isolated benchmark episode and
+# can otherwise leak host-specific guidance into the policy context.
+- id: agent-instructions
+  disabled: true
+
+# Remove all general-purpose coding actions. The DSH loop and context machinery
+# remain intact; only the task MCP tools are model-facing.
+- id: tool-bash
+  disabled: true
+- id: hapt-tool-bash
+  disabled: true
+- id: tool-pwsh
+  disabled: true
+- id: tool-fs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: tool-jobs
+  disabled: true
+- id: tool-str-replace-editor
+  disabled: true
+
+# Reward verification replays the complete ordered tool-call history from the
+# proxy trajectory. Episodes are deliberately capped to fit the context, so a
+# history rewrite would add ambiguity without providing value here.
+- id: compaction-basic
+  disabled: true
+- id: command-compact
+  disabled: true
+- id: tool-result-pruner
+  disabled: true
+
+- insert:
+    - id: mcp-task-environment
+      # Loader names must be literal strings: !!js is supported in config,
+      # but not in name. This project path is also mounted in training sandboxes.
+      # The module selects @deepseek-ai/dsh-mcp-client or ALFWorld's timeout fix.
+      name: {{HARNESS_S_ROOT}}/runtime/appworld/task_environment_mcp.mjs
+      config:
+        serverName: environment
+        transport: stdio
+        command: !!js process.env.DSH_TASK_PYTHON
+        args:
+          - !!js process.env.DSH_TASK_SERVER
+        env:
+          DSH_TASK_KIND: !!js process.env.DSH_TASK_KIND
+          DSH_TASK_GAME_FILE: !!js process.env.DSH_TASK_GAME_FILE ?? ''
+          DSH_TASK_ID: !!js process.env.DSH_TASK_ID ?? ''
+          DSH_TASK_DATA_ROOT: !!js process.env.DSH_TASK_DATA_ROOT ?? ''
+          DSH_TASK_MAX_STEPS: !!js process.env.DSH_TASK_MAX_STEPS ?? '30'
+          DSH_TASK_REWARD_MODE: !!js process.env.DSH_TASK_REWARD_MODE ?? 'binary'
+          DSH_TASK_RESULT_FILE: !!js process.env.DSH_TASK_RESULT_FILE ?? ''
+          DSH_TASK_EXPERIMENT_NAME: !!js process.env.DSH_TASK_EXPERIMENT_NAME ?? 'dressage'
+          PYTHONDONTWRITEBYTECODE: '1'
+        # Includes cold AppWorld initialization on the first execute call.
+        toolCallTimeoutMs: 300000
+        failOnStartupError: true
+        reconnect:
+          enabled: false

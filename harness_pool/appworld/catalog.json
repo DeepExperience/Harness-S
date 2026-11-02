@@ -1,0 +1,277 @@
+{
+  "schema_version": 1,
+  "h0": "h0",
+  "members": [
+    {
+      "id": "h0",
+      "parent": "h0",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "9cd4ed474189dbf4c433db2d0eaac115377c3e0e91c27f1190a48a9f7e497f19",
+      "path": "h0/harness.yml",
+      "state": "h0/state.json",
+      "skills": "h0/skills",
+      "sha256": {
+        "harness_pool/appworld/h0/harness.yml": "1ea5dd02f4afce4de035bc2d44879581bf4e5f186dfbb508da18db85d1ef3c77",
+        "harness_pool/appworld/h0/state.json": "0286da9b53c0104869274553a37d7f31c100022bda164189949c8a9f19eb1551"
+      }
+    },
+    {
+      "id": "pool-21c6b97e55d4c00a",
+      "parent": "r2-C2-5c1e12039fe46439",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "21c6b97e55d4c00a0a4e4d7cc5b6edd99aed3a35e5e5225ab6cc666da418acf3",
+      "path": "pool-21c6b97e55d4c00a/harness.yml",
+      "state": "pool-21c6b97e55d4c00a/state.json",
+      "skills": "pool-21c6b97e55d4c00a/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-21c6b97e55d4c00a/harness.yml": "9fa7a3348cbbdde033bc264cad31ac6db722c0e42432af53fb2e79ea8f59509d",
+        "harness_pool/appworld/pool-21c6b97e55d4c00a/state.json": "a0495de108d6cc0ebb83bb8b835035e43db358e71ff34fbec4a5408db4a4b26c"
+      }
+    },
+    {
+      "id": "pool-8fcb34218d0d0b09",
+      "parent": "r3-C1-5340eb955022ce0b",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "8fcb34218d0d0b09748f75d50a3f02c04746e9f914e09d533225a1b8faefb94e",
+      "path": "pool-8fcb34218d0d0b09/harness.yml",
+      "state": "pool-8fcb34218d0d0b09/state.json",
+      "skills": "pool-8fcb34218d0d0b09/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-8fcb34218d0d0b09/harness.yml": "e4feaa2a6a95ac2b796ff92b629f06381e769df2deaeab387a3734404a2db1f3",
+        "harness_pool/appworld/pool-8fcb34218d0d0b09/state.json": "e4cf651dde3560c6ed26ff418bbdeb6f99bd88a3e843d5014db22781254a8895"
+      }
+    },
+    {
+      "id": "pool-2bf2069c88b1e580",
+      "parent": "r1-C7-d8a11ec0536a33f2",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "2bf2069c88b1e580fbdbdf97b870831ad42e7b469e9fceab8e8d20067161079b",
+      "path": "pool-2bf2069c88b1e580/harness.yml",
+      "state": "pool-2bf2069c88b1e580/state.json",
+      "skills": "pool-2bf2069c88b1e580/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-2bf2069c88b1e580/harness.yml": "1543860ca42b697743e3044e00c6e3528a84dad89af0a5511ebba9195845b057",
+        "harness_pool/appworld/pool-2bf2069c88b1e580/state.json": "92b4ee937cb4cfaf8f80120559fe5bb483d4cbdc7ac22652374eaf58b93f7bf0"
+      }
+    },
+    {
+      "id": "pool-27b7e5dadebd1291",
+      "parent": "r1-C4-11769e8f20b834ad",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "27b7e5dadebd129179c0035349128efa11a7b67777b04413e36154428082170c",
+      "path": "pool-27b7e5dadebd1291/harness.yml",
+      "state": "pool-27b7e5dadebd1291/state.json",
+      "skills": "pool-27b7e5dadebd1291/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-27b7e5dadebd1291/harness.yml": "1ab8f7976e3691ebbbcb5d81d187980a2c8aca7a70d4443c1ec5d28be7073999",
+        "harness_pool/appworld/pool-27b7e5dadebd1291/state.json": "6691ed018a9358decfb00e77a187e2aae696a7079fc24d3a781d638b7c81462e",
+        "harness_pool/appworld/pool-27b7e5dadebd1291/skills/collection-exhaustion-completion/SKILL.md": "8533a1151a156ef5eb6b06dc680a117b011feca1f806d905e8de125eced9e3b0"
+      }
+    },
+    {
+      "id": "pool-027b915e72deceaf",
+      "parent": "r1-C1-e8698e5518ae2008",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "027b915e72deceaf5326a4ead37dfa503054512a40b857cbf4bfd141993818e6",
+      "path": "pool-027b915e72deceaf/harness.yml",
+      "state": "pool-027b915e72deceaf/state.json",
+      "skills": "pool-027b915e72deceaf/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-027b915e72deceaf/harness.yml": "f027123070307d6fead377863b5ef7fc26ab337c7140012a5669790c633e9845",
+        "harness_pool/appworld/pool-027b915e72deceaf/state.json": "b530d795d12956e7133cc73e5530a83ad63dfbb877e6edaf07e2dda98f7c99ad"
+      }
+    },
+    {
+      "id": "pool-a46d19909b2013e8",
+      "parent": "r3-C5-06c988cf8c34eb2e",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "a46d19909b2013e851ee2e05a050709443788a75fd02cc23412b92ca73ca4eb2",
+      "path": "pool-a46d19909b2013e8/harness.yml",
+      "state": "pool-a46d19909b2013e8/state.json",
+      "skills": "pool-a46d19909b2013e8/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-a46d19909b2013e8/harness.yml": "2f65067e9038c8c00cf9a3a3f873028a1e6f5bfe07d6b3b20cd567115f3508aa",
+        "harness_pool/appworld/pool-a46d19909b2013e8/state.json": "66191ae33530d47bafe5825d09fbfdd3ac9e2d2f94cd42b6bca4b754c9ed47cb",
+        "harness_pool/appworld/pool-a46d19909b2013e8/skills/collection-exhaustion-completion/SKILL.md": "8533a1151a156ef5eb6b06dc680a117b011feca1f806d905e8de125eced9e3b0",
+        "harness_pool/appworld/pool-a46d19909b2013e8/skills/irreversible-action-readiness/SKILL.md": "372b523e8bacf10b343c29c0b6b2f1b2065c2e645f7f50ee7d4bf77ccea236b3"
+      }
+    },
+    {
+      "id": "pool-201747e52963860f",
+      "parent": "r1-C2-df3867e6479b6df9",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "201747e52963860fb4260a2a6b47fbaa5901c413941b65a7cab2344f4e6eb3ce",
+      "path": "pool-201747e52963860f/harness.yml",
+      "state": "pool-201747e52963860f/state.json",
+      "skills": "pool-201747e52963860f/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-201747e52963860f/harness.yml": "61afbaa45ee699d6e44471a37adbb473ad5d8637b91e3b3579e65a5f783a4e77",
+        "harness_pool/appworld/pool-201747e52963860f/state.json": "48d49d931be12a43c11e87da878dab8ccc7d2d969d9c3c9937aa13ae53b93ac1",
+        "harness_pool/appworld/pool-201747e52963860f/skills/amazon-checkout-reconciliation/SKILL.md": "8c82408a7323900ecfbb6b6b332c6fb17157d336a5c01532b0777f8d8b8c355c"
+      }
+    },
+    {
+      "id": "pool-c2e01355f0c183df",
+      "parent": "r2-C5-2d9cc0ae7f27fc3e",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "c2e01355f0c183dfec1be9ec67318316b7c1988d3ef787e71db24fe3619bbf56",
+      "path": "pool-c2e01355f0c183df/harness.yml",
+      "state": "pool-c2e01355f0c183df/state.json",
+      "skills": "pool-c2e01355f0c183df/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-c2e01355f0c183df/harness.yml": "8480f5a8df9e645f5123359301c6a5f2383c359dbaab2b270214327059019491",
+        "harness_pool/appworld/pool-c2e01355f0c183df/state.json": "a4f2c8097874feeb7699fda60527293b7c24a2bfa6cd7c3982a70a82a8521ebf"
+      }
+    },
+    {
+      "id": "pool-bc085e0c524edd9f",
+      "parent": "r2-C6-0ad069fe3d6ede0a",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "bc085e0c524edd9ffd50c13cc9b1b54dbe6f9831364469511eb362f2264f72bf",
+      "path": "pool-bc085e0c524edd9f/harness.yml",
+      "state": "pool-bc085e0c524edd9f/state.json",
+      "skills": "pool-bc085e0c524edd9f/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-bc085e0c524edd9f/harness.yml": "2c97809a428c53da728f9371e5d5fc0c07b5cf3a62659efc7f5dd447544d6867",
+        "harness_pool/appworld/pool-bc085e0c524edd9f/state.json": "17923094349c6590a214927536c2a1d16f6121af81f92ea08dd0b26fe1e95bab",
+        "harness_pool/appworld/pool-bc085e0c524edd9f/skills/contract-preflight/SKILL.md": "0ca4091df13c17c6fc0fe7963e0551362ab1187caacf892a7ba8364a84fae325"
+      }
+    },
+    {
+      "id": "pool-62f4d3bd6fc300ab",
+      "parent": "r3-C2-f1fb3e2a614db982",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "62f4d3bd6fc300abba3e36846eb8672a7b000ee348a3193469c303db49b70550",
+      "path": "pool-62f4d3bd6fc300ab/harness.yml",
+      "state": "pool-62f4d3bd6fc300ab/state.json",
+      "skills": "pool-62f4d3bd6fc300ab/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-62f4d3bd6fc300ab/harness.yml": "f6db932e372ed018e51c81e22e354759e7eb16b981c3e9bfe312b02540fb39bb",
+        "harness_pool/appworld/pool-62f4d3bd6fc300ab/state.json": "04fec4e6fb9d52ef65f333b309f90fdd8c85dd67092733333da310b0578c280c"
+      }
+    },
+    {
+      "id": "pool-2b5bdd3f0bf68ab2",
+      "parent": "r1-C6-846526252d16b11e",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "2b5bdd3f0bf68ab2b823ed5e2236e697ea79ab54a16cc95af319cbe7cb3fe466",
+      "path": "pool-2b5bdd3f0bf68ab2/harness.yml",
+      "state": "pool-2b5bdd3f0bf68ab2/state.json",
+      "skills": "pool-2b5bdd3f0bf68ab2/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-2b5bdd3f0bf68ab2/harness.yml": "7478c3d011e2e300a8735012eb15b2f84146f26b30025fc5c583a0358d53188c",
+        "harness_pool/appworld/pool-2b5bdd3f0bf68ab2/state.json": "e6b770343fd4afa74527310ebea00c521c47cb98cfc5f37f11c4b02a37981a82"
+      }
+    },
+    {
+      "id": "pool-bb06043c0b8c8346",
+      "parent": "r1-C4-e2eb66862ee3cef6",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "bb06043c0b8c8346f1f56be4d26659109ca40bb1f0011ab76f948463471a7d67",
+      "path": "pool-bb06043c0b8c8346/harness.yml",
+      "state": "pool-bb06043c0b8c8346/state.json",
+      "skills": "pool-bb06043c0b8c8346/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-bb06043c0b8c8346/harness.yml": "bbda0a1875e2a2224cbe57de9c75980adc260498f1c695549aed7914052852eb",
+        "harness_pool/appworld/pool-bb06043c0b8c8346/state.json": "1f3435f395cfdb755531e542ac12ab6f42b5ee569e04ecea42de7600d0b100ab",
+        "harness_pool/appworld/pool-bb06043c0b8c8346/skills/collection-boundaries/SKILL.md": "6973ec594fb14ecb3d974c6a617d4d27f341d1cb0373cf1d2ca460e167714eda"
+      }
+    },
+    {
+      "id": "pool-2a16ecf85607672e",
+      "parent": "r1-C2-42b22bd6e5c58fbb",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "2a16ecf85607672e16003dbb786312df038452b14120092f088b695916e73680",
+      "path": "pool-2a16ecf85607672e/harness.yml",
+      "state": "pool-2a16ecf85607672e/state.json",
+      "skills": "pool-2a16ecf85607672e/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-2a16ecf85607672e/harness.yml": "1d27aee4867a0f7b0c2446b5b01824780b7e8fcf46a35537b0ac668f10bd8957",
+        "harness_pool/appworld/pool-2a16ecf85607672e/state.json": "1a1385514892a18ea8a42e8a98a273e1e75c04e178d6abef8b75fc5c1a888951",
+        "harness_pool/appworld/pool-2a16ecf85607672e/skills/boundary-evidence/SKILL.md": "edf4c7f00d110bc8755f556805fe71bd0a83f246074432e57837b5256ef16cdc"
+      }
+    },
+    {
+      "id": "pool-c80c9a4f715ffd8b",
+      "parent": "r2-C4-36f8c19170a686ba",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "c80c9a4f715ffd8b0ae2a4be0ae70ca91a58f40ab8a07d0f428715f84d336382",
+      "path": "pool-c80c9a4f715ffd8b/harness.yml",
+      "state": "pool-c80c9a4f715ffd8b/state.json",
+      "skills": "pool-c80c9a4f715ffd8b/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-c80c9a4f715ffd8b/harness.yml": "de1a6ada98aea0bc01714fc699ed134c4712a6f5970a0c65a1638c4680fa0255",
+        "harness_pool/appworld/pool-c80c9a4f715ffd8b/state.json": "a250f5760e5734f55287a6174425cbe1817994f3a9e6160776da7f9c06a3f3c1",
+        "harness_pool/appworld/pool-c80c9a4f715ffd8b/skills/source-completeness/SKILL.md": "540c434ba3732570bb1d80ed9980143bc351d8243da084badd34a1838259264e"
+      }
+    },
+    {
+      "id": "pool-b132a2ac9166e397",
+      "parent": "r2-C5-25cc308e8417e147",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "b132a2ac9166e3970b9a0c5d2e761eb3755639bd3215ac8c9678aeff54361ffd",
+      "path": "pool-b132a2ac9166e397/harness.yml",
+      "state": "pool-b132a2ac9166e397/state.json",
+      "skills": "pool-b132a2ac9166e397/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-b132a2ac9166e397/harness.yml": "5adfeaceade3fad4121af2e7c3d641d04ea9c7538ce92d1479d33de9010831df",
+        "harness_pool/appworld/pool-b132a2ac9166e397/state.json": "1f55091c2c4e7c2bb42f0ad8f68ace82642f7cca4f5fde5294f245abad70beca"
+      }
+    },
+    {
+      "id": "pool-c6427459b1158166",
+      "parent": "r1-C1-bbff4e1f6c6501a3",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "c6427459b11581663626c0a7b533f24f1b87c7af453b7ee0e89aa7b64e132825",
+      "path": "pool-c6427459b1158166/harness.yml",
+      "state": "pool-c6427459b1158166/state.json",
+      "skills": "pool-c6427459b1158166/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-c6427459b1158166/harness.yml": "46c5be0f12c6918b9ec8e540641e1c2dce8043c14b090236cb5a66cde71099e4",
+        "harness_pool/appworld/pool-c6427459b1158166/state.json": "325c00b58147292434e7e8c735bd38ca6c1382049e826ec08d3367c2e9b98b3f"
+      }
+    },
+    {
+      "id": "pool-6a4127dd4cbd7769",
+      "parent": "r2-C1-3e7228e359753e38",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "6a4127dd4cbd77696224c6ddb3c80eb05d611ee1d59319b4d66ea64a4b45106a",
+      "path": "pool-6a4127dd4cbd7769/harness.yml",
+      "state": "pool-6a4127dd4cbd7769/state.json",
+      "skills": "pool-6a4127dd4cbd7769/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-6a4127dd4cbd7769/harness.yml": "e7d932cd0124c9615be4d935191d993eda87b4b83d36c624974957da8be28fef",
+        "harness_pool/appworld/pool-6a4127dd4cbd7769/state.json": "c8eac6fffa984f96b6fd45c976d8f6f369b7b337ad54ff5b1fb1351f3bde3a04",
+        "harness_pool/appworld/pool-6a4127dd4cbd7769/skills/source-complete-target-set/SKILL.md": "37abd7823d50390e8ab945b6d4f6f95ec9652221cc7b5f2046a9ff26bf76396a"
+      }
+    },
+    {
+      "id": "pool-8b66bb208dfff985",
+      "parent": "r2-C6-52cd7b6f4fce031f",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "8b66bb208dfff9859b64b0a471d0ca9abb1c700384cbcc5e48db534f1024707a",
+      "path": "pool-8b66bb208dfff985/harness.yml",
+      "state": "pool-8b66bb208dfff985/state.json",
+      "skills": "pool-8b66bb208dfff985/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-8b66bb208dfff985/harness.yml": "7744c2a06dd3ebd8d4ec3f78c54058dc3effbe880642c315522b3e6a6b77a303",
+        "harness_pool/appworld/pool-8b66bb208dfff985/state.json": "0857dbbf719ff5552e7e8ae2d668edb18bad1d75bfbc336a01c42fa656514281",
+        "harness_pool/appworld/pool-8b66bb208dfff985/skills/financial-value-derivation/SKILL.md": "f5589dc1163a1790793539f8fee47e4534f29c1ab2068e77e037154ec25753d6"
+      }
+    },
+    {
+      "id": "pool-183135fe87648c87",
+      "parent": "r2-C2-ddcb58a366d4ea34",
+      "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+      "source_content_sha256": "183135fe87648c8736b6c9fb3a76d02dc9032d82cf947621cd3c6a4d106ba0d5",
+      "path": "pool-183135fe87648c87/harness.yml",
+      "state": "pool-183135fe87648c87/state.json",
+      "skills": "pool-183135fe87648c87/skills",
+      "sha256": {
+        "harness_pool/appworld/pool-183135fe87648c87/harness.yml": "1c0c5ba59c16f47dca4c4977b58d2947717d8dd61a8bcebe8b9d7374adbdec8f",
+        "harness_pool/appworld/pool-183135fe87648c87/state.json": "388d88cb0164e06f11c476b9f9571f1b584aad2c1042a08fd109ab33a6208c98"
+      }
+    }
+  ],
+  "description": "Frozen directional evolution archive: H0 and all 19 valid auxiliary harnesses. YAML paths are relocatable; state and skill contents are preserved."
+}

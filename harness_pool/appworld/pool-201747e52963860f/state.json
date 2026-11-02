@@ -1,0 +1,242 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [],
+  "schema_version": 5,
+  "skills": [
+    {
+      "body": "After loading this Skill, use the environment's execute tool for every app operation; never call an app API, Python snippet, or Skill name directly as a tool name.\n\nBefore any Amazon write, derive the exact requested product set, quantities, variations, constraints, recipient, destination, payment preference, and discount source from the request and any already retrieved source messages. If a required fact is missing, read the relevant documented app data before changing the cart. Resolve the recipient and delivery address from authoritative profile or contact data before checkout; if the requested address is not already saved in Amazon, add or select the matching address and never substitute an unrelated saved address.\n\nInspect the current cart before adding or removing anything. If the request is to buy the entire current cart, preserve its items and applied discount. Otherwise, remove or clear unrelated entries and rebuild the cart so it contains only the requested products. Represent each requested product as one cart entry with its exact total quantity; preserve requested gift wrapping and delivery constraints.\n\nSelect candidates that satisfy every stated product, seller, price, rating, review, inventory, delivery, color, size, and availability constraint. Follow the stated preference order. If a candidate is unavailable or fails a required constraint, move to the next valid candidate before spending remaining execution budget. Batch related documented reads and safe writes inside one environment execute call when possible, but do not repeat an identical failed call.\n\nFor discount selection, test each candidate independently and catch invalid-code errors so one failure does not stop the remaining candidates. Compare valid discounts on the same requested cart, then restore the best valid option before checkout. Do not spend the remaining budget searching for undocumented discount lists.\n\nBefore ordering, verify the cart contents, quantities, constraints, discount state, delivery destination, and a non-expired payment card. If the request needs multiple destinations, gift-wrap variants, or separate orders, rebuild and verify the cart for each order. Place an order only after the cart is clean, the recipient and address are resolved, and every constraint is satisfied.\n\nAfter each order, read the resulting order and verify its products, quantities, discount, address, payment, and delivery requirements. Complete only after every required order is verified; for a side-effect request, finish without a natural-language answer.",
+      "description": "Use only when the primary requested action is to place an Amazon order or modify an Amazon cart. It guides clean-cart reconciliation, recipient and address resolution, constraint and inventory validation, discount selection, checkout, and order verification. Do not use it when Amazon is only a data source for another app or for read-only, order-history, payment-history, or return requests.",
+      "evidence": [
+        {
+          "observation": "A contaminated cart was ordered unchanged, producing unrelated products and the wrong total quantity.",
+          "scorer_evidence_ids": [
+            "score-aad99272846dd0a40b144516",
+            "score-8e910899572df432083a284b",
+            "score-629a36b3b1d2c39d486bc31c",
+            "score-c1dbf1ca959d24c0c4dfdad7",
+            "score-aecdaf607efbab23a1abdce7"
+          ],
+          "step_ids": [
+            41,
+            42,
+            53,
+            56
+          ],
+          "trajectory_id": "383a053_3::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:20659"
+        },
+        {
+          "observation": "The agent saw unrelated cart items, ordered the whole cart, and produced seven order items instead of one product with quantity two.",
+          "scorer_evidence_ids": [
+            "score-85d8f77843a51500fb4e2f46",
+            "score-a9449f009486b221d2f03f84"
+          ],
+          "step_ids": [
+            29,
+            30,
+            44,
+            47
+          ],
+          "trajectory_id": "4242c97_1::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:878534"
+        },
+        {
+          "observation": "The agent added two units without first inspecting or isolating the cart, then placed an order; the scorer reported two order items instead of one product with quantity two.",
+          "scorer_evidence_ids": [
+            "score-3c84e9ac658d996b70676455",
+            "score-5becf31443581c1c705ff2ee",
+            "score-fb3686bdfb8304f880119322",
+            "score-a9449f009486b221d2f03f84",
+            "score-f98302622a0fc64fee41ea1f",
+            "score-25979a95166b084d5fc5b7c5"
+          ],
+          "step_ids": [
+            13,
+            19,
+            22,
+            25,
+            28,
+            31,
+            34,
+            37,
+            40,
+            43,
+            46
+          ],
+          "trajectory_id": "4242c97_2::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:481852"
+        },
+        {
+          "observation": "A six-item cart was submitted unchanged, yielding the wrong product and quantity.",
+          "scorer_evidence_ids": [
+            "score-0ba43f23ba693ca6b85a2eb3",
+            "score-cc318eda6d76c340d5409d7f"
+          ],
+          "step_ids": [
+            44,
+            45,
+            56
+          ],
+          "trajectory_id": "c8f5f44_1::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:335617"
+        },
+        {
+          "observation": "Inventory was checked only after ordering failed, and the budget expired before the remaining valid orders were placed.",
+          "scorer_evidence_ids": [
+            "score-a296fffc61e52b1f06a01611",
+            "score-bd5d8f95c8a125cbbc00d33c"
+          ],
+          "step_ids": [
+            21,
+            63,
+            65,
+            72,
+            74,
+            80,
+            83,
+            87,
+            89,
+            90,
+            92
+          ],
+          "trajectory_id": "20c1328_3::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:68778"
+        },
+        {
+          "observation": "The cart was initially contaminated, and discount-identifier loops aborted on the first invalid value so later candidates were never tested; no order was placed.",
+          "scorer_evidence_ids": [
+            "score-a9541caa3d5151a0be48dbcb",
+            "score-8edebf0f9a2990da8fac0f41",
+            "score-7bc39f473e5f86b7ed93d961"
+          ],
+          "step_ids": [
+            30,
+            32,
+            33,
+            35,
+            53,
+            57,
+            59,
+            60,
+            62,
+            75,
+            77,
+            80
+          ],
+          "trajectory_id": "c9458ed_1::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:127632"
+        },
+        {
+          "observation": "The measured run loaded the Skill, but placed the order with an unrelated saved Amazon address instead of the partner work address resolved from contact data.",
+          "scorer_evidence_ids": [
+            "score-76b13ab2355172c21177641b"
+          ],
+          "step_ids": [
+            72
+          ],
+          "trajectory_id": "1a79e37_1::g0:framework-round-1-codex-local-C2-v1-fbe65c675234:169064"
+        },
+        {
+          "observation": "The measured run substituted the only saved Amazon address for the requested home address instead of resolving the supervisor's home address from authoritative profile data.",
+          "scorer_evidence_ids": [
+            "score-63db81fe2a32c4a016dd6654"
+          ],
+          "step_ids": [
+            30,
+            33,
+            34
+          ],
+          "trajectory_id": "690d51b_3::g0:framework-round-1-codex-local-C2-v1-fbe65c675234:216825"
+        },
+        {
+          "observation": "After loading the Skill, the measured run repeatedly submitted app API expressions as tool names, produced unknown-tool errors, and placed no orders.",
+          "scorer_evidence_ids": [
+            "score-9db6ff234dc6e74c3251a2b4",
+            "score-3f3152d81b722e664ccdf9a4"
+          ],
+          "step_ids": [
+            3,
+            6,
+            9
+          ],
+          "trajectory_id": "b6d1f70_1::g0:framework-round-1-codex-local-C2-v1-fbe65c675234:428898"
+        },
+        {
+          "observation": "The Skill was loaded for a non-purchase Amazon order-history and payment-reconciliation task, then the measured run repeated malformed tool-name calls and created no payment request.",
+          "scorer_evidence_ids": [
+            "score-7d4a6deac4b430dbaf98596a",
+            "score-a296fffc61e52b1f06a01611"
+          ],
+          "step_ids": [
+            2,
+            5,
+            8
+          ],
+          "trajectory_id": "fa327a6_1::g0:framework-round-1-codex-local-C2-v1-fbe65c675234:813993"
+        },
+        {
+          "observation": "The measured run used the Skill successfully to place the first order, detect exhausted inventory, move to the next valid tied candidate, and complete all required orders.",
+          "scorer_evidence_ids": [
+            "score-e50bd5828d24bcd451c54017"
+          ],
+          "step_ids": [
+            55,
+            58
+          ],
+          "trajectory_id": "20c1328_3::g0:framework-round-1-codex-local-C2-v1-fbe65c675234:68778"
+        },
+        {
+          "observation": "A successful purchase selected delivery-compliant products, cleared the cart, added exact quantities, used a valid payment card, verified the order, and completed correctly.",
+          "scorer_evidence_ids": [],
+          "step_ids": [
+            24,
+            27,
+            29,
+            39,
+            42,
+            44,
+            45,
+            47,
+            51,
+            53
+          ],
+          "trajectory_id": "f6936d4_1::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:698298"
+        },
+        {
+          "observation": "A read-only cart-cost request only inspected the cart; the procedure must not clear or mutate it.",
+          "scorer_evidence_ids": [],
+          "step_ids": [
+            16,
+            17
+          ],
+          "trajectory_id": "2e9b91e_1::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:62585"
+        }
+      ],
+      "name": "amazon-checkout-reconciliation",
+      "when_to_use": "Use only when the user asks you to buy, order, or change an Amazon cart, or apply a discount before checkout. Do not use it for read-only cart, wishlist, order-history, payment-history, return, or financial-reconciliation requests, and never clear a cart merely because it is nonempty."
+    }
+  ],
+  "tool_view": {
+    "description_suffix": "",
+    "error_normalization": false,
+    "examples": [],
+    "helper_tool": false
+  }
+}

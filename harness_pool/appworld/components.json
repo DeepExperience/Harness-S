@@ -1,0 +1,142 @@
+[
+  {
+    "id": "h0",
+    "prompt_rules": 0,
+    "skills": 0,
+    "hooks": 0,
+    "memory": false
+  },
+  {
+    "id": "pool-21c6b97e55d4c00a",
+    "prompt_rules": 2,
+    "skills": 0,
+    "hooks": 4,
+    "memory": true
+  },
+  {
+    "id": "pool-8fcb34218d0d0b09",
+    "prompt_rules": 3,
+    "skills": 0,
+    "hooks": 6,
+    "memory": true
+  },
+  {
+    "id": "pool-2bf2069c88b1e580",
+    "prompt_rules": 1,
+    "skills": 0,
+    "hooks": 1,
+    "memory": false
+  },
+  {
+    "id": "pool-27b7e5dadebd1291",
+    "prompt_rules": 1,
+    "skills": 1,
+    "hooks": 0,
+    "memory": false
+  },
+  {
+    "id": "pool-027b915e72deceaf",
+    "prompt_rules": 1,
+    "skills": 0,
+    "hooks": 0,
+    "memory": false
+  },
+  {
+    "id": "pool-a46d19909b2013e8",
+    "prompt_rules": 1,
+    "skills": 2,
+    "hooks": 2,
+    "memory": true
+  },
+  {
+    "id": "pool-201747e52963860f",
+    "prompt_rules": 0,
+    "skills": 1,
+    "hooks": 0,
+    "memory": false
+  },
+  {
+    "id": "pool-c2e01355f0c183df",
+    "prompt_rules": 1,
+    "skills": 0,
+    "hooks": 0,
+    "memory": false
+  },
+  {
+    "id": "pool-bc085e0c524edd9f",
+    "prompt_rules": 1,
+    "skills": 1,
+    "hooks": 1,
+    "memory": false
+  },
+  {
+    "id": "pool-62f4d3bd6fc300ab",
+    "prompt_rules": 2,
+    "skills": 0,
+    "hooks": 5,
+    "memory": true
+  },
+  {
+    "id": "pool-2b5bdd3f0bf68ab2",
+    "prompt_rules": 1,
+    "skills": 0,
+    "hooks": 0,
+    "memory": false
+  },
+  {
+    "id": "pool-bb06043c0b8c8346",
+    "prompt_rules": 1,
+    "skills": 1,
+    "hooks": 1,
+    "memory": false
+  },
+  {
+    "id": "pool-2a16ecf85607672e",
+    "prompt_rules": 1,
+    "skills": 1,
+    "hooks": 0,
+    "memory": false
+  },
+  {
+    "id": "pool-c80c9a4f715ffd8b",
+    "prompt_rules": 1,
+    "skills": 1,
+    "hooks": 1,
+    "memory": false
+  },
+  {
+    "id": "pool-b132a2ac9166e397",
+    "prompt_rules": 1,
+    "skills": 0,
+    "hooks": 0,
+    "memory": false
+  },
+  {
+    "id": "pool-c6427459b1158166",
+    "prompt_rules": 2,
+    "skills": 0,
+    "hooks": 0,
+    "memory": false
+  },
+  {
+    "id": "pool-6a4127dd4cbd7769",
+    "prompt_rules": 1,
+    "skills": 1,
+    "hooks": 1,
+    "memory": false
+  },
+  {
+    "id": "pool-8b66bb208dfff985",
+    "prompt_rules": 2,
+    "skills": 1,
+    "hooks": 0,
+    "memory": false
+  },
+  {
+    "id": "pool-183135fe87648c87",
+    "prompt_rules": 1,
+    "skills": 0,
+    "hooks": 3,
+    "memory": true
+  }
+]

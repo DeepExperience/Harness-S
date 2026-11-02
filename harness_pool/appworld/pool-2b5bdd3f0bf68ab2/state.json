@@ -1,0 +1,110 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        {
+          "observation": "Detailed documentation exposed optional repeat_days and the flight date was known, but create_alarm omitted repeat_days.",
+          "scorer_evidence_ids": [
+            "score-8418f9f0080d4790c9ad7020"
+          ],
+          "step_ids": [
+            11,
+            12,
+            83,
+            84,
+            85,
+            86
+          ],
+          "trajectory_id": "321ec38_1::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:229907"
+        },
+        {
+          "observation": "Six units were ordered, but gift wrapping omitted the quantity and the resulting order had gift_wrap_quantity 1.",
+          "scorer_evidence_ids": [
+            "score-3d966946914cd2d587aba2fb"
+          ],
+          "step_ids": [
+            37,
+            38,
+            40,
+            41,
+            68
+          ],
+          "trajectory_id": "ec655df_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:368255"
+        },
+        {
+          "observation": "The exact recipient email was known, but repeated unsupported search_term calls returned unrelated users and no transaction was created.",
+          "scorer_evidence_ids": [
+            "score-c581e6f3eccb3ca3a7bdf3c8",
+            "score-025e01a70e027d13a4512f6d"
+          ],
+          "step_ids": [
+            41,
+            66,
+            68,
+            69,
+            71,
+            75,
+            77,
+            87,
+            89
+          ],
+          "trajectory_id": "82d2e01_1::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:59869"
+        },
+        {
+          "observation": "create_draft required recipient and attachment fields, but repeated unsupported search_term calls returned unrelated contacts and no draft was created.",
+          "scorer_evidence_ids": [
+            "score-773bd64858f1c98b4339eba0",
+            "score-6f710641183a1efcc8e9bd1e"
+          ],
+          "step_ids": [
+            35,
+            42,
+            44,
+            45,
+            47,
+            54,
+            56,
+            57,
+            59
+          ],
+          "trajectory_id": "ffea2b5_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:166042"
+        }
+      ],
+      "rule_id": "api-contract-checkpoint",
+      "slot": "action_guidance",
+      "text": "When preparing a side-effect call, use the endpoint schema already available to map required semantics to optional fields, including counts, dates, repeat schedules, recipient identifiers, and attachment paths. If the destination API accepts an exact identifier that is already known, pass it directly instead of searching another app. Reuse the stored access-token and password variables; do not reopen documentation or search when the needed fields are resolved."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [],
+  "tool_view": {
+    "description_suffix": "",
+    "error_normalization": false,
+    "examples": [],
+    "helper_tool": false
+  }
+}

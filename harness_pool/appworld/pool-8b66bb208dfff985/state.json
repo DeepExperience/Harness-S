@@ -1,0 +1,508 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        {
+          "observation": "The agent left downloaded files under the default downloads paths and did not bind them to the existing dated meeting structure.",
+          "scorer_evidence_ids": [
+            "score-70f15a781e76820b24b871d2",
+            "score-e6e087b8fdd85aa7558e84d3",
+            "score-1831867b078757fef4bcc044"
+          ],
+          "step_ids": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            50,
+            51,
+            52,
+            53,
+            54
+          ],
+          "trajectory_id": "d8e490b_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:418660"
+        },
+        {
+          "observation": "The agent created and sent a new draft instead of binding to the existing reply draft and thread.",
+          "scorer_evidence_ids": [
+            "score-b7e6b6490d6d060b2e19738d",
+            "score-53683bac94dab82645043757",
+            "score-c349f279cd2c25909b3b1e01",
+            "score-29d34e44eebbbd1a85e60f54",
+            "score-e28eadf48c89f3d5ae012188",
+            "score-f7f5e8ce031df27599d0735e",
+            "score-0bd53e15cb99ff8f6b0e3a7e"
+          ],
+          "step_ids": [
+            24,
+            25,
+            26,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "trajectory_id": "ffea2b5_1::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:104460"
+        },
+        {
+          "observation": "The agent added requested games to an uncleared cart and did not reconcile unrelated entries or gift-wrap quantity before checkout.",
+          "scorer_evidence_ids": [
+            "score-1ae9e0676e27b754d63258da",
+            "score-dbafdb928a6a7ea16d173ef5",
+            "score-3d966946914cd2d587aba2fb"
+          ],
+          "step_ids": [
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            43,
+            44,
+            45,
+            46,
+            47
+          ],
+          "trajectory_id": "ec655df_3::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:321373"
+        },
+        {
+          "observation": "The agent added one requested item without first showing the cart and then placed an order containing five items.",
+          "scorer_evidence_ids": [
+            "score-cff0e08a4eeb7c9baeffe3eb",
+            "score-c31dc8cfbafc7b06b0f145e7"
+          ],
+          "step_ids": [
+            15,
+            16,
+            17,
+            32
+          ],
+          "trajectory_id": "1b2bae9_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:427981"
+        },
+        {
+          "observation": "The agent saw unrelated cart items but proceeded to checkout and exhausted the step budget on payment failures.",
+          "scorer_evidence_ids": [
+            "score-e4dfbc6b2355dceca6c95328",
+            "score-846b863c4528369d8b9ca725"
+          ],
+          "step_ids": [
+            43,
+            44,
+            45,
+            46,
+            55,
+            56,
+            58,
+            59,
+            61,
+            62,
+            64,
+            65,
+            89
+          ],
+          "trajectory_id": "b0934aa_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:447057"
+        },
+        {
+          "observation": "The agent had the recipient's exact email but repeatedly used an unsupported fuzzy-search parameter instead of the documented recipient field.",
+          "scorer_evidence_ids": [
+            "score-c581e6f3eccb3ca3a7bdf3c8",
+            "score-025e01a70e027d13a4512f6d"
+          ],
+          "step_ids": [
+            41,
+            66,
+            68,
+            69,
+            71,
+            75,
+            77,
+            87,
+            89
+          ],
+          "trajectory_id": "82d2e01_1::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:59869"
+        },
+        {
+          "observation": "The agent had the documented draft schema but repeatedly used an unsupported fuzzy-search parameter and never created the draft.",
+          "scorer_evidence_ids": [
+            "score-773bd64858f1c98b4339eba0",
+            "score-6f710641183a1efcc8e9bd1e"
+          ],
+          "step_ids": [
+            35,
+            42,
+            44,
+            45,
+            47,
+            54,
+            56,
+            57,
+            59
+          ],
+          "trajectory_id": "ffea2b5_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:166042"
+        },
+        {
+          "observation": "The successful control listed drafts, bound to draft 518, used documented parameters, and read back the sent email.",
+          "step_ids": [
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            44
+          ],
+          "trajectory_id": "bcb9696_3::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:305310"
+        },
+        {
+          "observation": "The successful control enumerated exactly five employers and sent one email per exact recipient.",
+          "step_ids": [
+            51,
+            52,
+            53,
+            54
+          ],
+          "trajectory_id": "a7179fa_3::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:176758"
+        },
+        {
+          "observation": "The successful control passed the known receiver email directly to the documented transaction field.",
+          "scorer_evidence_ids": [
+            "score-7a2823af1e2c102b34a7cecf",
+            "score-e7c244243787d3d88b873c45"
+          ],
+          "step_ids": [
+            69,
+            70,
+            72,
+            73
+          ],
+          "trajectory_id": "82d2e01_2::g0:framework-validation-rollouts-probe-5-parent-0-1ea5dd02f4af:885803"
+        }
+      ],
+      "rule_id": "pre-side-effect-target-binding",
+      "slot": "action_guidance",
+      "text": "Before an irreversible action, bind the request to the exact existing target and current mutable state. Inspect the relevant draft, file, cart, or API schema; use the exact identifier or documented parameter; reconcile unrelated entries and requested quantities; and read back the result before completion. If an exact recipient or path is already known, pass it directly rather than substituting a fuzzy search. Do not create a replacement when the request references an existing draft, thread, or file structure. Skip this extra inspection for read-only work or when the exact target and state are already verified."
+    },
+    {
+      "evidence": [
+        {
+          "observation": "The agent requested payment from all nine note participants even though authoritative payment state supported only four pending recipients; the scorer compared nine added requests with the four-request pending map.",
+          "scorer_evidence_ids": [
+            "score-0b4de2ad97f54b3c4d87b230",
+            "score-9b7ac9909ec6750b18bf100d",
+            "score-bbb290396afdce6594b8db3b",
+            "score-a46ee55aaaaf1a906017eafe",
+            "score-f2824d012fee8c0f0dbff8f0"
+          ],
+          "step_ids": [
+            54,
+            58,
+            61,
+            64,
+            76,
+            84,
+            87
+          ],
+          "trajectory_id": "22cc237_3::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:589161"
+        },
+        {
+          "observation": "The agent found an already-paid 46.67 individual share, incorrectly treated it as a total, divided by three, and created 15.56 requests; the scorer expected 46.67 per unpaid roommate.",
+          "scorer_evidence_ids": [
+            "score-ed4779f5708c22ad84e4841b",
+            "score-21939347d70886943111836a",
+            "score-bbb290396afdce6594b8db3b",
+            "score-93f5b1306285888523893bb8",
+            "score-be3e6e43286a0fa9df26208d",
+            "score-a24c3fb7e340f4afd7f97430"
+          ],
+          "step_ids": [
+            45,
+            47,
+            48,
+            50,
+            51,
+            54,
+            57
+          ],
+          "trajectory_id": "92fe421_1::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:370111"
+        },
+        {
+          "observation": "The agent never queried Venmo, wrote a placeholder 0.00 for the current month, and appended it out of the required descending month order; the scorer expected 424.0 and the original month order preserved.",
+          "scorer_evidence_ids": [
+            "score-3b031601c29238ba0142a98e",
+            "score-1da5d1c5aaabfa6a7fd1bfeb",
+            "score-aa0aacff3e510d202a40649b",
+            "score-3e04b7fa9b6f3ef7480a8922"
+          ],
+          "step_ids": [
+            29,
+            30,
+            33,
+            34,
+            35,
+            38
+          ],
+          "trajectory_id": "b6d1104_1::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:947462"
+        },
+        {
+          "observation": "The agent invented a 500.0 monthly expense without querying Venmo; the scorer expected 328.0.",
+          "scorer_evidence_ids": [
+            "score-6cbbcd20fc824a783a94e8ca",
+            "score-d784c43ff65d4f55f4e7a444",
+            "score-dc717eb449dc99fdd815f183"
+          ],
+          "step_ids": [
+            50,
+            51,
+            54,
+            55,
+            56,
+            59
+          ],
+          "trajectory_id": "b6d1104_2::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:275923"
+        },
+        {
+          "observation": "The agent invented a 100.0 monthly expense and appended it although the log required descending month order; the scorer expected 273.0 and the original month order preserved.",
+          "scorer_evidence_ids": [
+            "score-e98454c1e5e28dc5fe29c5bf",
+            "score-6b8b67a32963d296a65fe846",
+            "score-05b6baab84c3fcae5942e1ca",
+            "score-6c56df7d5100d0b422f1b855"
+          ],
+          "step_ids": [
+            29,
+            30,
+            39,
+            40,
+            41,
+            44
+          ],
+          "trajectory_id": "b6d1104_3::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:714954"
+        },
+        {
+          "observation": "The successful Venmo control retrieved the exact order cost from authoritative Amazon data and sent that value to the exact recipient; the amount and receiver checks passed.",
+          "scorer_evidence_ids": [
+            "score-513b7b58f5fb7772c28e146f",
+            "score-16edae8080684f7f331c0f86",
+            "score-bbefe9f0fe316be5598b978a"
+          ],
+          "step_ids": [
+            23,
+            30,
+            39,
+            51,
+            53
+          ],
+          "trajectory_id": "5800354_3::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:884699"
+        },
+        {
+          "observation": "The successful aggregate control gathered the complete liked-song set, computed genre counts once, verified the total, and submitted the derived maximum.",
+          "scorer_evidence_ids": [
+            "score-4e2b714d3be7fee9dd298efb",
+            "score-bbb290396afdce6594b8db3b",
+            "score-93f70a02769a437e1f5d2a0a"
+          ],
+          "step_ids": [
+            21,
+            23,
+            32,
+            36,
+            38,
+            39
+          ],
+          "trajectory_id": "425a494_1::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:610598"
+        }
+      ],
+      "rule_id": "financial-value-derivation",
+      "slot": "action_guidance",
+      "text": "Before creating a payment request, sending money, or updating a financial log, retrieve the authoritative records that define the required amount. Distinguish an individual share from a total, reconcile prior payments to derive the unpaid participant set, and compute the exact value once from the complete relevant record set. Never use a placeholder or divide an already-paid individual share to infer a total. For a monthly aggregate, query the source app for the complete current-month set, sum only task-matching records, and preserve the log's existing month order when inserting the new entry. Verify the computed amount, recipients, and placement immediately before the write; skip this only when the task supplies the exact amount and target or the action is read-only."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [
+    {
+      "body": "Procedure:\n1. Identify the authoritative source app and record type for the required financial value.\n2. Retrieve the complete relevant record set with documented filters and pagination; do not rely on a single default page or an unrelated record.\n3. Classify each amount as a total, individual share, prior payment, or monthly aggregate. An already-paid individual share is not the total.\n4. Compute the required value once from the complete task-matching set and retain it in a named variable.\n5. For payment requests, derive the unpaid participant set by reconciling the participant list against authoritative prior payments; do not request from everyone when the task says some have paid.\n6. Verify the computed amount, recipient set, description, and any required ordering against the source records before writing.\n7. For a monthly expense log, determine the current month from the environment, query the complete source set for that month, sum only task-matching records, and insert the new entry in the log's existing month order.\n8. Perform the write only after verification, then read back the changed record.\n\nStop if the authoritative source is unavailable; report failure rather than substituting a placeholder. If the task already supplies the exact amount and target, proceed directly without this procedure.",
+      "description": "Derive exact financial amounts and unpaid participant sets from authoritative app records before payment-platform requests or expense-log writes.",
+      "evidence": [
+        {
+          "observation": "The agent requested payment from all nine note participants even though authoritative payment state supported only four pending recipients.",
+          "scorer_evidence_ids": [
+            "score-0b4de2ad97f54b3c4d87b230",
+            "score-9b7ac9909ec6750b18bf100d"
+          ],
+          "step_ids": [
+            54,
+            58,
+            61,
+            64,
+            76,
+            84,
+            87
+          ],
+          "trajectory_id": "22cc237_3::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:589161"
+        },
+        {
+          "observation": "The agent divided an already-paid individual share and created requests for the wrong amount.",
+          "scorer_evidence_ids": [
+            "score-ed4779f5708c22ad84e4841b",
+            "score-21939347d70886943111836a"
+          ],
+          "step_ids": [
+            45,
+            47,
+            48,
+            50,
+            51,
+            54,
+            57
+          ],
+          "trajectory_id": "92fe421_1::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:370111"
+        },
+        {
+          "observation": "The agent wrote a placeholder monthly expense without querying Venmo and broke required month ordering.",
+          "scorer_evidence_ids": [
+            "score-3b031601c29238ba0142a98e",
+            "score-1da5d1c5aaabfa6a7fd1bfeb",
+            "score-3e04b7fa9b6f3ef7480a8922"
+          ],
+          "step_ids": [
+            29,
+            30,
+            33,
+            34,
+            35,
+            38
+          ],
+          "trajectory_id": "b6d1104_1::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:947462"
+        },
+        {
+          "observation": "The agent invented a monthly expense without querying Venmo.",
+          "scorer_evidence_ids": [
+            "score-6cbbcd20fc824a783a94e8ca",
+            "score-d784c43ff65d4f55f4e7a444"
+          ],
+          "step_ids": [
+            50,
+            51,
+            54,
+            55,
+            56,
+            59
+          ],
+          "trajectory_id": "b6d1104_2::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:275923"
+        },
+        {
+          "observation": "The agent invented a monthly expense and appended it against the required month ordering.",
+          "scorer_evidence_ids": [
+            "score-e98454c1e5e28dc5fe29c5bf",
+            "score-6b8b67a32963d296a65fe846",
+            "score-6c56df7d5100d0b422f1b855"
+          ],
+          "step_ids": [
+            29,
+            30,
+            39,
+            40,
+            41,
+            44
+          ],
+          "trajectory_id": "b6d1104_3::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:714954"
+        },
+        {
+          "observation": "The successful control retrieved the exact order cost and recipient before sending money.",
+          "scorer_evidence_ids": [
+            "score-513b7b58f5fb7772c28e146f",
+            "score-16edae8080684f7f331c0f86",
+            "score-bbefe9f0fe316be5598b978a"
+          ],
+          "step_ids": [
+            23,
+            30,
+            39,
+            51,
+            53
+          ],
+          "trajectory_id": "5800354_3::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:884699"
+        },
+        {
+          "observation": "The successful control gathered the complete source set and computed the aggregate before answering.",
+          "scorer_evidence_ids": [
+            "score-4e2b714d3be7fee9dd298efb",
+            "score-bbb290396afdce6594b8db3b",
+            "score-93f70a02769a437e1f5d2a0a"
+          ],
+          "step_ids": [
+            21,
+            23,
+            32,
+            36,
+            38,
+            39
+          ],
+          "trajectory_id": "425a494_1::g0:framework-validation-rollouts-probe-20-parent-2-fbbf3cf70c6a:610598"
+        }
+      ],
+      "name": "financial-value-derivation",
+      "when_to_use": "Use when a task requires a payment request, money transfer, or monthly expense-log update and the amount, unpaid recipient set, or aggregate is not explicitly supplied. Do not use it for read-only financial questions or when the task already gives the exact amount and recipients."
+    }
+  ],
+  "tool_view": {
+    "description_suffix": "",
+    "error_normalization": false,
+    "examples": [],
+    "helper_tool": false
+  }
+}

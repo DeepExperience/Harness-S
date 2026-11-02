@@ -1,0 +1,312 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [
+    {
+      "action": "warn",
+      "condition": "duplicate_call_gte",
+      "event": "after_tool",
+      "id": "duplicate-execute-guidance",
+      "message": "The same execute call repeated. Use its observed result or change the next call; when a broad API listing is empty, inspect a specific candidate API with api_docs.show_api_doc rather than repeating the listing.",
+      "parameters": {
+        "threshold": 2
+      }
+    }
+  ],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        {
+          "scorer_evidence_ids": [
+            "score-a296fffc61e52b1f06a01611",
+            "score-5c55d14f8ffe8cd2e3b94a5c",
+            "score-c6261fed78417041e3f61270"
+          ],
+          "step_ids": [
+            14,
+            17,
+            18,
+            20,
+            21,
+            23,
+            78,
+            87
+          ],
+          "trajectory_id": "22cc237_2::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:851882"
+        },
+        {
+          "scorer_evidence_ids": [
+            "score-6af3dbe2c7611ff102977625",
+            "score-67880227d161343448e5d490",
+            "score-7c5c5d6ca00f4b3f641df414",
+            "score-ea62027e8ee2cdb3986cbb64",
+            "score-56ff58d652a673dcad4d26ff",
+            "score-faf4e2a48e4bb210e2276fcf"
+          ],
+          "step_ids": [
+            14,
+            15,
+            17,
+            18,
+            20,
+            21,
+            23,
+            24,
+            26,
+            27,
+            29,
+            30,
+            33
+          ],
+          "trajectory_id": "9dabbc9_2::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:559764"
+        },
+        {
+          "scorer_evidence_ids": [
+            "score-a296fffc61e52b1f06a01611",
+            "score-15e6c8454f16cb9127a81026",
+            "score-a4b1ecbf3290f2121b55919f",
+            "score-df006804b87fdfb49d15b486"
+          ],
+          "step_ids": [
+            33,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            87,
+            88,
+            89
+          ],
+          "trajectory_id": "bde252e_3::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:282367"
+        },
+        {
+          "scorer_evidence_ids": [
+            "score-54de800c8bdd825698e9f966",
+            "score-6d1c0f94d45335002d93de61",
+            "score-8f0e882352cb1f237412bee2"
+          ],
+          "step_ids": [
+            17,
+            18,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56
+          ],
+          "trajectory_id": "c1091c7_1::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:860992"
+        },
+        {
+          "scorer_evidence_ids": [
+            "score-d79b316b48dd7f16800e7790",
+            "score-bbb290396afdce6594b8db3b",
+            "score-acfda0d3eb040adbb4fe2b21",
+            "score-4b6d018d45d85cafcc28c6c3",
+            "score-be47d88350ca481fa77fe937",
+            "score-737bba5c6ec2c8ce26102bb5",
+            "score-16edae8080684f7f331c0f86",
+            "score-bbefe9f0fe316be5598b978a"
+          ],
+          "step_ids": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56
+          ],
+          "trajectory_id": "5800354_3::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:884699"
+        },
+        {
+          "scorer_evidence_ids": [
+            "score-0c1c24b859f3000569af380e",
+            "score-bbb290396afdce6594b8db3b",
+            "score-51edb663d2f593093e1d57b1",
+            "score-8cac4e14a67481d82365f950",
+            "score-a6eee006a97b06596779fc12",
+            "score-d4872b77355cee936d91bedf",
+            "score-4e960ca74f72c0538418e672",
+            "score-5952a28609967baf3fd165c0",
+            "score-ac15f172cf88dc257f42ddbc"
+          ],
+          "step_ids": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "trajectory_id": "302c169_2::g0:framework-round-1-parent-evidence-P1-1ea5dd02f4af:418466"
+        },
+        {
+          "scorer_evidence_ids": [
+            "score-879f203b14c92171d8ccccc1",
+            "score-a296fffc61e52b1f06a01611",
+            "score-7ca42c2613f3062b7e5fad67",
+            "score-c6261fed78417041e3f61270"
+          ],
+          "step_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "trajectory_id": "22cc237_2::g0:framework-round-1-codex-local-C7-v1-4b059f9692a7:851882"
+        },
+        {
+          "scorer_evidence_ids": [
+            "score-e1c85474f3ca98668c472da0",
+            "score-a296fffc61e52b1f06a01611",
+            "score-359e79156787ac7e2c1a60a3",
+            "score-1bd1c378d369da038a5b98dd",
+            "score-4f81b259ec7e23153e6c0069",
+            "score-120a84946096b1e6f748ca0a",
+            "score-d123ea0288646dca411ad436",
+            "score-d16a5f7b069723630b5df118"
+          ],
+          "step_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "trajectory_id": "5800354_3::g0:framework-round-1-codex-local-C7-v1-4b059f9692a7:884699"
+        },
+        {
+          "scorer_evidence_ids": [
+            "score-22de019bdef16a00f6b19813",
+            "score-a296fffc61e52b1f06a01611",
+            "score-303eef6de6a9f19b1fbf3c33",
+            "score-3e0508eacc8564d958f4c25a",
+            "score-eeb90d90021df096f95ca260",
+            "score-e5f16154fc0fcd7a0f65ced7"
+          ],
+          "step_ids": [
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33
+          ],
+          "trajectory_id": "9dabbc9_2::g0:framework-round-1-codex-local-C7-v1-4b059f9692a7:559764"
+        },
+        {
+          "scorer_evidence_ids": [
+            "score-7f88ff03c6981922a506b4c7",
+            "score-fb9aff1107c615f9aeebaabc",
+            "score-ea94f417bdda5d8c7ac7e72f",
+            "score-2cff4b1da714785490d332e6"
+          ],
+          "step_ids": [
+            57,
+            58,
+            59,
+            60,
+            61,
+            62
+          ],
+          "trajectory_id": "bde252e_3::g0:framework-round-1-codex-local-C7-v1-4b059f9692a7:282367"
+        },
+        {
+          "scorer_evidence_ids": [
+            "score-26678755c21ca7f0dfcb1640",
+            "score-6c6718c1ec303959c751e4a6",
+            "score-bbb290396afdce6594b8db3b",
+            "score-51edb663d2f593093e1d57b1"
+          ],
+          "step_ids": [
+            51,
+            52,
+            53,
+            54,
+            55,
+            56
+          ],
+          "trajectory_id": "c1091c7_1::g0:framework-round-1-codex-local-C7-v1-4b059f9692a7:860992"
+        }
+      ],
+      "rule_id": "operation-semantics",
+      "slot": "action_guidance",
+      "text": "Use mcp__environment__execute for every AppWorld action; AppWorld APIs are Python inside its code parameter, never separate tool names. Before the first state-changing money or record operation, resolve the operation and exact affected set from documentation and task evidence. For money, distinguish completed transfers from requests; inspect transaction history before creating requests and use the operation-specific API. For records, enumerate all matching evidence, prefer in-place update or disable, and use documented delete/create only when the app requires replacement. If the affected set or API remains unresolved, stop rather than broadening the mutation. Bypass this rule for read-only work or already unambiguous operations."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [],
+  "tool_view": {
+    "description_suffix": "Use mcp__environment__execute for all AppWorld work; resolve operation semantics and exact affected records before mutation.",
+    "error_normalization": false,
+    "examples": [
+      "Use mcp__environment__execute for every AppWorld action. Put Python in its code parameter; never call apis.*, execute, or skill as separate tools. If a broad API listing is empty, call api_docs.show_api_doc for a specific candidate operation instead of repeating it.",
+      "Before creating payment requests, read completed transaction history and exclude participants who already paid. Match participants and amounts; use create_transaction only when the request requires sending money.",
+      "Before updating, disabling, or moving records, enumerate all matching evidence and resolve the exact affected set. Prefer in-place update or disable; use documented delete/create only when the app requires replacement, then verify exact removed, added, and unchanged records."
+    ],
+    "helper_tool": false
+  }
+}

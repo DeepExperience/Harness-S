@@ -1,0 +1,16 @@
+{
+  "members": [
+    "h0",
+    "pool-21c6b97e55d4c00a",
+    "pool-a46d19909b2013e8",
+    "pool-2b5bdd3f0bf68ab2",
+    "pool-8fcb34218d0d0b09",
+    "pool-2bf2069c88b1e580",
+    "pool-62f4d3bd6fc300ab",
+    "pool-c2e01355f0c183df",
+    "pool-183135fe87648c87",
+    "pool-027b915e72deceaf"
+  ],
+  "description": "Reuse the source fixed Pool; never reselect candidates",
+  "test_used": false
+}

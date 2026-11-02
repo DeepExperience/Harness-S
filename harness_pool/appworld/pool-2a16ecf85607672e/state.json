@@ -1,0 +1,56 @@
+{
+  "context": {
+    "compaction": {
+      "enabled": false,
+      "max_tokens": 4096,
+      "retain_ratio": 0.16,
+      "threshold_ratio": 0.8
+    },
+    "state_injection": {
+      "max_chars": 1200,
+      "mode": "never"
+    },
+    "tool_result_pruner": {
+      "enabled": false,
+      "head_chars": 4096,
+      "tail_chars": 1024,
+      "threshold_chars": 8192
+    }
+  },
+  "core_sha256": "b09d435aafa8cc2282bdaaa82224a9c69781bd1584fc800eebdb81569882d7b1",
+  "hooks": [],
+  "memory": {
+    "enabled": false,
+    "fields": []
+  },
+  "prompt_rules": [
+    {
+      "evidence": [
+        "R7",
+        "R9"
+      ],
+      "rule_id": "boundary-evidence-before-completeness",
+      "slot": "action_guidance",
+      "text": "Before treating a paginated collection or a relative date window as complete, obtain the endpoint's pagination contract and, when the request is temporal, an explicitly observed current date. Request the maximum permitted page size and continue only until an empty page, a short page, a documented terminal condition, or a definitive filter boundary. Retain decision-critical identifiers and boundary evidence. Stop once the target is resolved or a valid boundary is established; do not force unrelated discovery."
+    }
+  ],
+  "schema_version": 5,
+  "skills": [
+    {
+      "body": "1. Read the exact API documentation for the endpoint. Record its default and maximum page size, page-index semantics, filters, sort order, and any documented terminal condition.\n2. For a paginated collection, request the largest permitted page size. Continue page by page only until one of: an empty page, a page shorter than the requested limit, a documented terminal condition, or a definitive filter boundary that proves no further relevant record can appear. Preserve decision-critical identifiers and the boundary observation.\n3. For a relative date window, obtain the current date and time from an explicit environment observation, such as Python datetime.now() inside execute, rather than the newest record, a notification, or remembered real-world time. Compute the inclusive start and end in the task's date and default time zone, then verify each selected record against those boundaries.\n4. Stop as soon as the target is resolved or a valid boundary is established. Do not inspect unrelated categories, re-fetch a valid terminal page, or force discovery after the answer is already complete.\n5. If documentation or observations are insufficient to establish a boundary, state that limitation and seek the precise missing evidence rather than treating a bounded result as exhaustive.",
+      "description": "Establish completeness for paginated lists and relative date windows before acting.",
+      "evidence": [
+        "R7",
+        "R9"
+      ],
+      "name": "boundary-evidence",
+      "when_to_use": "Use before treating a list, search result, or relative time window as complete when a decision or write depends on every matching record. Do not use it after a valid boundary is established or when the requested target is already resolved."
+    }
+  ],
+  "tool_view": {
+    "description_suffix": "",
+    "error_normalization": false,
+    "examples": [],
+    "helper_tool": false
+  }
+}

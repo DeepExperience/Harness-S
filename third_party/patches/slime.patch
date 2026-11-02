@@ -1,0 +1,876 @@
+diff --git a/slime/backends/megatron_utils/actor.py b/slime/backends/megatron_utils/actor.py
+index 7627e7a..c5e6df0 100644
+--- a/slime/backends/megatron_utils/actor.py
++++ b/slime/backends/megatron_utils/actor.py
+@@ -552,6 +552,10 @@ class MegatronTrainRayActor(TrainRayActor):
+ 
+             maybe_finalize_async_save(blocking=True)
+ 
++        from dressage.rollout.case_failure import zero_case_failures
++        if zero_case_failures():
++            from dressage.training.optimizer_state import materialize_adam_state
++            materialize_adam_state(self.optimizer)
+         save(rollout_id, self.model, self.optimizer, self.opt_param_scheduler)
+ 
+         if force_sync and self.args.async_save:
+diff --git a/slime/backends/megatron_utils/arguments.py b/slime/backends/megatron_utils/arguments.py
+index 833af4a..893418c 100644
+--- a/slime/backends/megatron_utils/arguments.py
++++ b/slime/backends/megatron_utils/arguments.py
+@@ -1,5 +1,6 @@
+ import ast
+ import logging
++import os
+ 
+ from megatron.training.arguments import parse_args as _megatron_parse_args
+ from megatron.training.arguments import validate_args as _megatron_validate_args
+@@ -153,7 +154,12 @@ def _set_default_megatron_args(args):
+     # reducing repeated validation/planning work and parallelizing load.
+     args.use_persistent_ckpt_worker = True
+     args.ckpt_assume_constant_structure = True
+-    args.ckpt_fully_parallel_load = True
++    # Megatron's fully-parallel loader currently cannot merge the variable-
++    # length DP-reshardable optimizer lists produced by the CPU-offloaded,
++    # precision-aware Adam used in this project (for example 117 vs 68 local
++    # entries).  Standard distributed loading preserves the checkpoint format
++    # and avoids that cross-rank Python-list merge on restart.
++    args.ckpt_fully_parallel_load = os.environ.get("RESUME_FROM_CKPT") != "1"
+     # placeholders
+     if args.seq_length is None:
+         args.seq_length = 4096
+diff --git a/slime/backends/megatron_utils/loss.py b/slime/backends/megatron_utils/loss.py
+index adfa5d6..86b2554 100644
+--- a/slime/backends/megatron_utils/loss.py
++++ b/slime/backends/megatron_utils/loss.py
+@@ -1,6 +1,7 @@
+ from argparse import Namespace
+ from collections.abc import Callable, Iterator
+ from typing import Any
++import os
+ 
+ import torch
+ import torch.distributed as dist
+@@ -98,7 +99,7 @@ def get_responses(
+             end += total_length
+             start = end - response_length
+             logits_chunk = logits[start - 1 : end - 1]
+-            tokens_chunk = tokens[-response_length:]
++            tokens_chunk = tokens[-response_length:] if response_length else tokens[:0]
+         elif args.allgather_cp:
+             # DSA: global concat then contiguous CP split. Each rank owns logits for
+             # global positions [chunk_start, chunk_end).
+@@ -773,6 +774,9 @@ def compute_advantages_and_returns(args: Namespace, rollout_data: RolloutBatch)
+         )
+ 
+     # TODO: OpenRLHF always does advantages normalization but veRL doesn't seem to do it.
++    if os.environ.get('HAPT_GRPO_ALGORITHM_VERSION'):
++        from dressage.training.grpo_algorithm import validate_args
++        validate_args(args)
+     if args.normalize_advantages:
+         all_advs = torch.cat(advantages)
+         cp_size = mpu.get_context_parallel_world_size()
+@@ -809,20 +813,22 @@ def compute_advantages_and_returns(args: Namespace, rollout_data: RolloutBatch)
+ 
+             all_masks = torch.cat(mask_chunks)
+ 
+-        if all_masks.numel() > 0:
+-            assert (
+-                all_advs.size() == all_masks.size()
+-            ), f"Shape mismatch before whitening: advantages {all_advs.size()}, masks {all_masks.size()}"
+-            dp_group = mpu.get_data_parallel_group()
+-
+-            whitened_advs_flat = distributed_masked_whiten(
+-                all_advs,
+-                all_masks,
+-                process_group=dp_group,
+-                shift_mean=True,
+-            )
+-            chunk_lengths = [chunk.size(0) for chunk in advantages]
+-            advantages = list(torch.split(whitened_advs_flat, chunk_lengths))
++        # Empty CP slices still participate in the collective.
++        assert (
++            all_advs.size() == all_masks.size()
++        ), f"Shape mismatch before whitening: advantages {all_advs.size()}, masks {all_masks.size()}"
++        # Each CP rank holds disjoint token slices. Normalize over all of
++        # them, otherwise identical advantages depend on token position.
++        dp_group = mpu.get_data_parallel_group(with_context_parallel=True)
++
++        whitened_advs_flat = distributed_masked_whiten(
++            all_advs,
++            all_masks,
++            process_group=dp_group,
++            shift_mean=True,
++        )
++        chunk_lengths = [chunk.size(0) for chunk in advantages]
++        advantages = list(torch.split(whitened_advs_flat, chunk_lengths))
+ 
+     rollout_data["advantages"] = advantages
+     rollout_data["returns"] = returns
+diff --git a/slime/backends/megatron_utils/model.py b/slime/backends/megatron_utils/model.py
+index 1ad6cd7..2db8ab2 100644
+--- a/slime/backends/megatron_utils/model.py
++++ b/slime/backends/megatron_utils/model.py
+@@ -201,7 +201,18 @@ def get_optimizer_param_scheduler(args: Namespace, optimizer: MegatronOptimizer)
+     # resume), so the worst case is the cosine/linear schedule reaches its
+     # plateau slightly early or late. Pass ``--lr-decay-iters`` explicitly if you
+     # need exact decay control.
+-    args.train_iters = args.num_rollout * args.rollout_batch_size * args.n_samples_per_prompt // args.global_batch_size
++    computed_train_iters = (
++        args.num_rollout
++        * args.rollout_batch_size
++        * args.n_samples_per_prompt
++        // args.global_batch_size
++    )
++    # Eval-only jobs intentionally use ``num_rollout=0``.  Megatron still
++    # constructs the optimizer/scheduler before running the initial eval, and
++    # its scheduler rejects a zero-length decay horizon.  A one-step *nominal*
++    # horizon keeps initialization valid without changing the job's zero
++    # training-rollout contract.
++    args.train_iters = max(1, computed_train_iters)
+     if args.lr_decay_iters is None:
+         args.lr_decay_iters = args.train_iters
+     lr_decay_steps = args.lr_decay_iters * args.global_batch_size
+@@ -679,6 +690,10 @@ def train_one_step(
+         assert update_successful
+         opt_param_scheduler.step(increment=step_global_batch_size)
+ 
++    if os.environ.get("HAPT_JOINT_MODE") == "joint":
++        if not valid_step or not math.isfinite(float(grad_norm)):
++            raise RuntimeError("formal joint optimizer update is non-finite or was skipped")
++
+     # release grad
+     for model_chunk in model:
+         model_chunk.zero_grad_buffer()
+diff --git a/slime/backends/sglang_utils/server_control.py b/slime/backends/sglang_utils/server_control.py
+index 56da8e4..5028fe5 100644
+--- a/slime/backends/sglang_utils/server_control.py
++++ b/slime/backends/sglang_utils/server_control.py
+@@ -1,5 +1,6 @@
+ import asyncio
+ import logging
++import time
+ from typing import Any
+ 
+ from slime.utils.http_utils import get, post
+@@ -7,6 +8,9 @@ from slime.utils.http_utils import get, post
+ logger = logging.getLogger(__name__)
+ 
+ ABORT_RETRY_INTERVAL_SECONDS = 3
++IDLE_RETRY_INTERVAL_SECONDS = 1
++IDLE_CONFIRMATIONS = 5
++IDLE_TIMEOUT_SECONDS = 300
+ 
+ 
+ def num_requests_from_load(load: Any) -> int:
+@@ -65,3 +69,74 @@ async def abort_server_until_idle(url: str, retry_interval: int = ABORT_RETRY_IN
+ 
+ async def abort_servers_until_idle(urls: list[str]) -> None:
+     await asyncio.gather(*(abort_server_until_idle(url) for url in urls))
++
++
++async def wait_server_until_stably_idle(
++    url: str,
++    *,
++    retry_interval: float = IDLE_RETRY_INTERVAL_SECONDS,
++    confirmations: int = IDLE_CONFIRMATIONS,
++    timeout: float = IDLE_TIMEOUT_SECONDS,
++) -> None:
++    """Wait for natural request completion before colocated memory offload.
++
++    Qwen3.5's Mamba request pool can still be completing asynchronous cleanup
++    immediately after ``/v1/loads`` first reports zero. Requiring several
++    consecutive idle observations avoids racing that cleanup. We deliberately
++    do not call ``/abort_request`` here: aborting a live Mamba request while its
++    KV memory is about to be offloaded can itself trigger an illegal CUDA access.
++    """
++
++    if confirmations < 1:
++        raise ValueError("confirmations must be at least 1")
++    deadline = time.monotonic() + timeout
++    idle_observations = 0
++    consecutive_errors = 0
++    while True:
++        if time.monotonic() >= deadline:
++            raise TimeoutError(f"Timed out waiting for SGLang server {url} to become stably idle")
++        try:
++            num_requests = await _get_server_num_requests(url)
++            consecutive_errors = 0
++        except Exception as exc:
++            consecutive_errors += 1
++            logger.warning(
++                "Failed to read SGLang server load from %s (%d/3): %s",
++                url,
++                consecutive_errors,
++                exc,
++            )
++            if consecutive_errors >= 3:
++                raise RuntimeError(f"SGLang server {url} disappeared while waiting for idle") from exc
++            idle_observations = 0
++            await asyncio.sleep(retry_interval)
++            continue
++
++        if num_requests <= 0:
++            idle_observations += 1
++            if idle_observations >= confirmations:
++                logger.info(
++                    "SGLang server %s is stably idle (%d/%d)",
++                    url,
++                    idle_observations,
++                    confirmations,
++                )
++                return
++        else:
++            if idle_observations:
++                logger.info(
++                    "SGLang server %s became busy again after %d idle observations",
++                    url,
++                    idle_observations,
++                )
++            idle_observations = 0
++            logger.info(
++                "Waiting for SGLang server %s to drain naturally: %d requests remain",
++                url,
++                num_requests,
++            )
++        await asyncio.sleep(retry_interval)
++
++
++async def wait_servers_until_stably_idle(urls: list[str]) -> None:
++    await asyncio.gather(*(wait_server_until_stably_idle(url) for url in urls))
+diff --git a/slime/ray/rollout.py b/slime/ray/rollout.py
+index badeb8d..17fc4c9 100644
+--- a/slime/ray/rollout.py
++++ b/slime/ray/rollout.py
+@@ -1,4 +1,5 @@
+ import dataclasses
++import json
+ import itertools
+ import logging
+ import multiprocessing
+@@ -20,7 +21,11 @@ from slime.backends.sglang_utils.sglang_engine import SGLangEngine
+ from slime.rollout.base_types import call_rollout_fn
+ from slime.utils import logging_utils
+ from slime.utils.data import get_source
+-from slime.utils.dp_schedule import build_dp_schedule
++from slime.utils.dp_schedule import (
++    build_dp_schedule,
++    dynamic_dp_padding_sources,
++    pad_train_data_for_dp_alignment,
++)
+ from slime.utils.health_monitor import RolloutHealthMonitor
+ from slime.utils.http_utils import _wrap_ipv6, find_available_port, get_host_info, init_http_client
+ from slime.utils.logging_utils import configure_logger, init_tracking
+@@ -37,6 +42,15 @@ logging.getLogger("httpcore").setLevel(logging.WARNING)
+ 
+ logger = logging.getLogger(__name__)
+ 
++
++def _allow_partial_final_batch() -> bool:
++    return os.environ.get("DRESSAGE_ALLOW_PARTIAL_FINAL_BATCH", "0").strip().lower() in {
++        "1",
++        "true",
++        "yes",
++        "on",
++    }
++
+ _ROLLOUT_DATA_TENSOR_DTYPES = {
+     "tokens": torch.long,
+     "loss_masks": torch.int,
+@@ -226,7 +240,15 @@ class ServerGroup:
+ 
+         # Compute base_port from the maximum cursor across all nodes that
+         # this group's engines may land on (conservative: just use global max).
+-        base_port = max(port_cursors.values()) if port_cursors else 15000
++        # Multiple colocated training jobs can share the host network while
++        # using disjoint GPU sets.  A per-job base prevents both managers from
++        # observing the same free ports during simultaneous startup and then
++        # racing to bind them.
++        base_port = (
++            max(port_cursors.values())
++            if port_cursors
++            else int(os.environ.get("SLIME_ROLLOUT_PORT_BASE", "15000"))
++        )
+         addr_and_ports, port_cursors = _allocate_rollout_engine_addr_and_ports_normal(
+             args=self.args,
+             rollout_engines=rollout_engines,
+@@ -529,7 +551,67 @@ class RolloutManager:
+ 
+     def get_num_rollout_per_epoch(self):
+         assert self.args.rollout_global_dataset
+-        return len(self.data_source) // self.args.rollout_batch_size
++        dataset_size = len(self.data_source)
++        batch_size = self.args.rollout_batch_size
++        full_batches, remainder = divmod(dataset_size, batch_size)
++        return full_batches + int(_allow_partial_final_batch() and remainder > 0)
++
++    def set_active_harness(self, binding: dict[str, str]):
++        """Activate one immutable Harness for future rollout groups."""
++        setter = getattr(self.data_source, "set_active_harness", None)
++        if setter is None:
++            raise RuntimeError("configured rollout data source cannot switch Harness")
++        return setter(binding)
++
++    def get_active_harness(self):
++        getter = getattr(self.data_source, "get_active_harness", None)
++        return getter() if getter is not None else None
++
++    def set_harness_assignment(self, plan):
++        setter = getattr(self.data_source, "set_harness_assignment", None)
++        if setter is None:
++            raise RuntimeError("configured rollout data source cannot assign mixed Harnesses")
++        return setter(plan)
++
++    def probe_harness_assignment(self, plan):
++        """One real G8 diagnostic through the training sampler/rollout, no optimizer.
++
++        Own source and copied args: never consume the live training cursor,
++        change Current, convert to DP train data, or perform a weight update.
++        """
++        from copy import deepcopy
++        from dressage.rollout.data_source import DressageDataSource
++        from dressage.rollout.sampling_audit import group_sampling_audit
++        if self.data_source.buffer:
++            raise RuntimeError("diagnostic requires an empty live retry buffer")
++        before = (self.data_source.sample_offset, self.data_source.sample_group_index,
++                  self.data_source.sample_index, self.data_source.get_harness_assignment())
++        args = deepcopy(self.args)
++        args.rollout_batch_size, args.global_batch_size = 1, 8
++        args.load, args.save = None, None
++        source = DressageDataSource(args)
++        source.set_harness_assignment(plan)
++        generated = call_rollout_fn(self.generate_rollout, args, -1, source, evaluation=False)
++        data = generated.samples
++        _validate_rollout_id_annotated(data)
++        while data and isinstance(data[0], list):
++            data = list(itertools.chain.from_iterable(data))
++        if not data:
++            raise ValueError("empty diagnostic rollout")
++        directory = Path(os.environ["HAPT_JOINT_RUN_ROOT"]) / "verification/mixed-probe"
++        audit = self._write_joint_rollout_audit(data, -1, output_path=directory / "rollouts.json")
++        sampling = group_sampling_audit(data)
++        after = (self.data_source.sample_offset, self.data_source.sample_group_index,
++                 self.data_source.sample_index, self.data_source.get_harness_assignment())
++        if before != after or self.data_source.buffer:
++            raise RuntimeError("diagnostic unexpectedly changed live training sampler")
++        result = {"audit":audit, "sampling":sampling, "assignment":plan,
++                  "live_sampler_unchanged":True, "training_updates":0}
++        output = directory / "result.json"
++        temporary = output.with_name(".result.json.tmp")
++        temporary.write_text(json.dumps(result, indent=2)+"\n")
++        os.replace(temporary, output)
++        return result
+ 
+     def generate(self, rollout_id):
+         start_time = time.time()
+@@ -538,14 +620,142 @@ class RolloutManager:
+         if self.args.ci_test and self.args.use_fault_tolerance and rollout_id >= 2:
+             self._try_ci_fault_injection()
+         data, metrics = self._get_rollout_data(rollout_id=rollout_id)
++        self._write_joint_rollout_audit(data, rollout_id)
++        try:
++            self._write_sampling_audit(data, rollout_id)
++        except Exception:
++            logger.exception("Sampling observability failed; retained training samples are unchanged")
+         self._save_debug_rollout_data(data, rollout_id=rollout_id, evaluation=False)
+         _log_rollout_data(rollout_id, self.args, data, metrics, time.time() - start_time)
+         if self.args.debug_rollout_only:
+             # if debug rollout only, we don't convert samples to train data and directly return
+             return
++        samples = data
+         data = self._convert_samples_to_train_data(data)
++        if os.environ.get('HAPT_GRPO_ALGORITHM_VERSION'):
++            from dressage.training.grpo_algorithm import write_receipt
++            write_receipt(self.args, samples, data, rollout_id)
+         return self._split_train_data_by_dp(data)
+ 
++    def _write_sampling_audit(self, data, rollout_id: int) -> None:
++        """Audit retained groups for every Dressage environment, not just V6."""
++        try:
++            from dressage.config import log_dir
++            from dressage.rollout.sampling_audit import group_sampling_audit
++        except ImportError:
++            return  # Upstream slime can also be used without Dressage.
++        audit = group_sampling_audit(data)
++        output = log_dir() / "sampling-audit" / f"step-{int(rollout_id) + 1:04d}.json"
++        output.parent.mkdir(parents=True, exist_ok=True)
++        temporary = output.with_name(f".{output.name}.{os.getpid()}.tmp")
++        temporary.write_text(json.dumps(audit, indent=2) + "\n", encoding="utf-8")
++        os.replace(temporary, output)
++        if any(audit[key] for key in ("seed_collision_groups", "engine_seed_collision_groups",
++                                      "fully_identical_groups", "engine_seed_unobserved_groups")):
++            logger.warning("Sampling audit step %s: configured/engine seed collisions=%s/%s, identical groups=%s, unobserved engine seeds=%s; %s",
++                           rollout_id + 1, audit["seed_collision_groups"], audit["engine_seed_collision_groups"], audit["fully_identical_groups"],
++                           audit["engine_seed_unobserved_groups"], output)
++
++    def _write_joint_rollout_audit(self, data, rollout_id: int, *, output_path=None):
++        """Persist one token-free terminal record per AppWorld trajectory."""
++        root = os.environ.get("DRESSAGE_JOINT_AUDIT_DIR", "").strip()
++        if not root and output_path is None:
++            return
++        terminal = {}
++        raw_audits = {}
++        for sample in data:
++            metadata = dict(getattr(sample, "metadata", None) or {})
++            task_id = str(metadata.get("task_id") or metadata.get("instance_id") or "")
++            trajectory_id = getattr(sample, "rollout_id", None)
++            if trajectory_id is None:
++                trajectory_id = metadata.get("parent_traj_id") or getattr(sample, "index", None)
++            key = (task_id, str(trajectory_id))
++            for record in (metadata.get("proxy_extra_info") or {}).get("raw_generation_audit", []):
++                raw_audits.setdefault(key, {})[record["step_id"]] = record
++            segment_index = int(metadata.get("segment_index", 0) or 0)
++            previous = terminal.get(key)
++            if previous is None or segment_index >= previous[0]:
++                terminal[key] = (segment_index, sample, metadata)
++        rows = []
++        for _segment, sample, metadata in sorted(
++            terminal.values(),
++            key=lambda item: (
++                int(getattr(item[1], "group_index", -1) or -1),
++                int(getattr(item[1], "index", -1) or -1),
++                str(getattr(item[1], "rollout_id", "")),
++            ),
++        ):
++            status = getattr(sample, "status", None)
++            task_id = str(metadata.get("task_id") or metadata.get("instance_id") or "")
++            trajectory_id = getattr(sample, "rollout_id", None)
++            if trajectory_id is None:
++                trajectory_id = metadata.get("parent_traj_id") or getattr(sample, "index", None)
++            raw = list(raw_audits.get((task_id, str(trajectory_id)), {}).values())
++            rows.append(
++                {
++                    "task_id": str(metadata.get("task_id") or metadata.get("instance_id") or ""),
++                    "instance_id": str(metadata.get("instance_id") or ""),
++                    "group_index": getattr(sample, "group_index", None),
++                    "sample_index": getattr(sample, "index", None),
++                    "rollout_id": getattr(sample, "rollout_id", None),
++                    "parent_traj_id": metadata.get("parent_traj_id"),
++                    "reward": sample.get_reward_value(self.args),
++                    "status": getattr(status, "value", str(status)),
++                    "response_length": int(getattr(sample, "response_length", 0) or 0),
++                    "agent_early_stop_kind": metadata.get("blackbox_agent_early_stop_kind"),
++                    "case_failure_no_grad": metadata.get("case_failure_no_grad", False),
++                    "remove_sample": bool(getattr(sample, "remove_sample", False)),
++                    "agent_error_message": metadata.get("blackbox_agent_error_message"),
++                    "trajectory_finalize_error": metadata.get("trajectory_finalize_error"),
++                    "dressage_retry_count": int(metadata.get("dressage_retry_count", 0)),
++                    "raw_generation_audit": raw,
++                    "raw_generation_summary": {
++                        "calls": len(raw),
++                        "generated_tokens": sum(r.get("generated_tokens", 0) for r in raw),
++                        "length_stops": sum(r.get("upstream_finish_reason") == "length" for r in raw),
++                        "output_overflows": sum(bool(r.get("output_overflow")) for r in raw),
++                        "max_closing_parameter_tags": max((r.get("closing_parameter_tags", 0) for r in raw), default=0),
++                    },
++                    "harness_version": metadata.get("harness_version")
++                    or metadata.get("harness_id"),
++                    "harness_sha256": metadata.get("harness_sha256"),
++                    "harness_role": metadata.get("harness_role", "active"),
++                    "harness_mix": metadata.get("harness_mix", "active_only"),
++                    "router_stage_version": metadata.get("router_stage_version"),
++                    "route_plan_version": metadata.get("route_plan_version"),
++                    "rescue_audit_path": metadata.get("rescue_audit_path"),
++                    "rescue_audit_sha256": metadata.get("rescue_audit_sha256"),
++                    "sampling_clone_index": metadata.get("sampling_clone_index"),
++                    "sampling_seed_base": (metadata.get("backend_options") or {}).get("proxy", {}).get("sampling_seed_base"),
++                    **({"h0_retry_on_zero": True,
++                        "h0_retry_audit": metadata.get('h0_retry_audit'),
++                        "h0_retry_audit_sha256": metadata.get('h0_retry_audit_sha256')}
++                       if metadata.get('h0_retry_on_zero') else {}),
++                    "policy_start_version": metadata.get("dressage_start_token_version"),
++                    "policy_end_version": metadata.get("dressage_end_token_version"),
++                    "reward_diagnostics": metadata.get('case_failure_diagnostics')
++                    or metadata.get(f"{metadata.get('task_source')}_blackbox_reward")
++                    or metadata.get(f"{metadata.get('task_source')}_dsh_reward")
++                    or metadata.get("swegym_reward"),
++                }
++            )
++        output = Path(output_path) if output_path is not None else Path(root) / f"step-{int(rollout_id) + 1:04d}.json"
++        output.parent.mkdir(parents=True, exist_ok=True)
++        temporary = output.with_name(f".{output.name}.{os.getpid()}.tmp")
++        temporary.write_text(
++            json.dumps(
++                {"schema_version": 1, "optimizer_step": int(rollout_id) + 1, "samples": rows,
++                 "environment_failures": sum(bool((r.get("reward_diagnostics") or {}).get("environment_failure")) for r in rows)},
++                ensure_ascii=False,
++                indent=2,
++                sort_keys=True,
++            )
++            + "\n",
++            encoding="utf-8",
++        )
++        os.replace(temporary, output)
++        return json.loads(output.read_text())
++
+     def eval(self, rollout_id):
+         if self.args.debug_train_only:
+             # if debug train only, we don't generate evaluation data
+@@ -823,12 +1033,30 @@ class RolloutManager:
+         total_lengths = [len(t) for t in data["tokens"]]
+         data["total_lengths"] = total_lengths
+ 
++        padding_sources = dynamic_dp_padding_sources(
++            self.args,
++            self.train_parallel_config,
++            total_lengths,
++            global_batch_size=self.args.global_batch_size,
++            rollout_indices=data["rollout_ids"],
++            allow_partial_final_step=_allow_partial_final_batch(),
++        )
++        if padding_sources:
++            logger.warning(
++                "adding %d zero-loss sample(s) for DP microbatch alignment; sources=%s",
++                len(padding_sources),
++                padding_sources,
++            )
++            pad_train_data_for_dp_alignment(data, padding_sources)
++            total_lengths = data["total_lengths"]
++
+         partitions, micro_batch_indices, num_microbatches, global_batch_sizes = build_dp_schedule(
+             self.args,
+             self.train_parallel_config,
+             total_lengths,
+             global_batch_size=self.args.global_batch_size,
+             rollout_indices=data["rollout_ids"],
++            allow_partial_final_step=_allow_partial_final_batch(),
+         )
+ 
+         # Package per-rank rollout_data
+diff --git a/slime/rollout/sglang_rollout.py b/slime/rollout/sglang_rollout.py
+index 9dcf5fc..3ca917e 100644
+--- a/slime/rollout/sglang_rollout.py
++++ b/slime/rollout/sglang_rollout.py
+@@ -20,7 +20,12 @@ from slime.rollout.filter_hub.base_types import MetricGatherer, call_dynamic_fil
+ from slime.utils.async_utils import run
+ from slime.utils.data import Dataset
+ from slime.utils.eval_config import EvalDatasetConfig
+-from slime.utils.http_utils import get, get_rollout_num_engines, post
++from slime.utils.http_utils import (
++    get,
++    get_rollout_num_engines,
++    get_rollout_trajectory_concurrency,
++    post,
++)
+ from slime.utils.misc import SingletonMeta, load_function
+ from slime.utils.processing_utils import (
+     build_processor_kwargs,
+@@ -92,7 +97,8 @@ class GenerateState(metaclass=SingletonMeta):
+         self.tokenizer = load_tokenizer(args.hf_checkpoint, trust_remote_code=True)
+         self.processor = load_processor(args.hf_checkpoint, trust_remote_code=True)
+ 
+-        self.semaphore = asyncio.Semaphore(args.sglang_server_concurrency * get_rollout_num_engines(args))
++        self.trajectory_concurrency = get_rollout_trajectory_concurrency(args)
++        self.semaphore = asyncio.Semaphore(self.trajectory_concurrency)
+         self.sampling_params: dict[str, Any] = dict(
+             temperature=args.rollout_temperature,
+             top_p=args.rollout_top_p,
+@@ -226,6 +232,20 @@ async def generate_and_rm(
+     sample: Sample | list[Sample],
+     sampling_params: dict[str, Any],
+     evaluation: bool = False,
++) -> Sample | list[Sample]:
++    from dressage.rollout.case_failure import run_case
++    retained = {}
++    return await run_case(
++        lambda: _generate_and_rm(args, sample, sampling_params, evaluation, retained),
++        sample, phase='generation_or_reward', result_holder=retained)
++
++
++async def _generate_and_rm(
++    args: Namespace,
++    sample: Sample | list[Sample],
++    sampling_params: dict[str, Any],
++    evaluation: bool = False,
++    retained: dict | None = None,
+ ) -> Sample | list[Sample]:
+     # mask previous off-policy generation for partial rollout
+     if args.partial_rollout and args.mask_offpolicy_in_partial_rollout and sample.response_length > 0:
+@@ -260,6 +280,8 @@ async def generate_and_rm(
+             else:
+                 sample = await generate(args, sample, sampling_params)
+ 
++    if retained is not None:
++        retained['samples'] = sample
+     # for the rm that need the whole group, we will not do the rm here
+     if args.group_rm:
+         return sample
+@@ -321,7 +343,16 @@ async def generate_and_rm_group(
+             asyncio.create_task(generate_and_rm(args, sample, current_sampling_params, evaluation=evaluation))
+         )
+ 
+-    group = await asyncio.gather(*tasks)
++    try:
++        group = await asyncio.gather(*tasks)
++    except BaseException:
++        # gather propagates the first error while siblings keep running. Join
++        # them before the caller discards this attempt's proxy sessions.
++        for task in tasks:
++            if not task.done():
++                task.cancel()
++        await asyncio.gather(*tasks, return_exceptions=True)
++        raise
+ 
+     # for the rm that need the whole group, we will do the rm here
+     if not state.aborted and args.group_rm:
+diff --git a/slime/utils/data.py b/slime/utils/data.py
+index 102b5ef..0fc3226 100644
+--- a/slime/utils/data.py
++++ b/slime/utils/data.py
+@@ -244,12 +244,14 @@ class Dataset:
+             else:
+                 output_prompt = prompt
+ 
+-            if processor:
++            # Some text-only checkpoints (for example Qwen3.5) expose a
++            # processor even when the dataset has no multimodal fields.  A
++            # plain string prompt is valid in that case and must stay byte-for-
++            # byte identical for custom black-box generators.  Only invoke the
++            # vision processor for conversation-shaped multimodal prompts.
++            if processor and isinstance(prompt, list):
+                 from slime.utils.processing_utils import process_vision_info
+ 
+-                assert isinstance(
+-                    prompt, list
+-                ), f"prompt must be a list when processor is not None, got {type(prompt)} instead"
+                 multimodal_inputs = process_vision_info(prompt, processor)
+             else:
+                 multimodal_inputs = None
+diff --git a/slime/utils/dp_schedule.py b/slime/utils/dp_schedule.py
+index 1735fad..0ad0afc 100644
+--- a/slime/utils/dp_schedule.py
++++ b/slime/utils/dp_schedule.py
+@@ -39,6 +39,7 @@ Invariants guaranteed by :func:`build_dp_schedule` (asserted by the tests):
+ 
+ from __future__ import annotations
+ 
++import copy
+ import logging
+ from typing import Any
+ 
+@@ -79,6 +80,115 @@ def _pack_step_into_mbs(
+     return [list(range(i, min(i + micro_batch_size, n))) for i in range(0, n, micro_batch_size)]
+ 
+ 
++def dynamic_dp_padding_sources(
++    args: Any,
++    train_parallel_config: dict,
++    total_lengths: list[int],
++    *,
++    global_batch_size: int,
++    rollout_indices: list[int],
++    allow_partial_final_step: bool = False,
++) -> list[int]:
++    """Return sample indices that must be duplicated as zero-loss DP padding.
++
++    Dynamic packing occasionally produces a number of singleton micro-batches
++    that cannot be rounded up to the DP/VPP alignment multiple by splitting
++    bins.  For example, 19 singleton bins on DP=2 need 20 synchronized
++    forward/backward calls.  The caller duplicates the shortest indicated
++    sample, masks all of its response tokens out, and keeps its rollout id.
++    This adds the required collective call without changing the loss or the
++    number of logical rollouts used for normalization.
++    """
++    if not args.use_dynamic_batch_size:
++        return []
++
++    dp_size = train_parallel_config["dp_size"]
++    cp_size = train_parallel_config["cp_size"]
++    vpp_size = train_parallel_config["vpp_size"]
++    mb_group = train_parallel_config["microbatch_group_size_per_vp_stage"]
++    align_to = dp_size * (mb_group if vpp_size > 1 else 1)
++    max_per_bin = args.max_tokens_per_gpu * cp_size
++
++    rollout_id_to_samples: dict[int, list[int]] = {}
++    for sample_pos, rid in enumerate(rollout_indices):
++        rollout_id_to_samples.setdefault(rid, []).append(sample_pos)
++    rollout_ids = list(rollout_id_to_samples)
++    num_full_steps, remainder = divmod(len(rollout_ids), global_batch_size)
++    num_steps = num_full_steps + int(allow_partial_final_step and remainder > 0)
++
++    sources: list[int] = []
++    for step_i in range(num_steps):
++        step_rollouts = rollout_ids[
++            step_i * global_batch_size : (step_i + 1) * global_batch_size
++        ]
++        sample_indices = [
++            pos for rid in step_rollouts for pos in rollout_id_to_samples[rid]
++        ]
++        step_lengths = [total_lengths[index] for index in sample_indices]
++        step_mbs = _pack_step_into_mbs(
++            step_lengths,
++            args=args,
++            use_dynamic_batch_size=True,
++            max_per_bin=max_per_bin,
++            micro_batch_size=getattr(args, "micro_batch_size", None),
++            balance_by_flops=args.balance_by_flops,
++        )
++        target_count = max(
++            ((len(step_mbs) + align_to - 1) // align_to) * align_to,
++            align_to,
++        )
++        expanded = copy.deepcopy(step_mbs)
++        expand_bins_by_splitting(expanded, target_count, step_lengths)
++        missing = target_count - len(expanded)
++        if missing > 0:
++            source = min(sample_indices, key=lambda index: total_lengths[index])
++            sources.extend([source] * missing)
++    return sources
++
++
++def pad_train_data_for_dp_alignment(data: dict[str, Any], sources: list[int]) -> None:
++    """Append zero-loss duplicates selected by :func:`dynamic_dp_padding_sources`.
++
++    Only list-valued per-sample fields are extended.  Token-shaped auxiliary
++    fields (rollout log-probs, top-p replay data, teacher outputs, and so on)
++    are copied from the source so all forward paths remain structurally valid;
++    the all-zero loss mask makes their gradient contribution exactly zero.
++    """
++    if not sources:
++        return
++    original_count = len(data["tokens"])
++    per_sample_keys = [
++        key
++        for key, value in data.items()
++        if isinstance(value, list) and len(value) == original_count
++    ]
++    next_padding_index = min(
++        (value for value in data.get("sample_indices", []) if isinstance(value, int)),
++        default=0,
++    ) - 1
++
++    for source in sources:
++        if not 0 <= source < original_count:
++            raise IndexError(f"DP padding source {source} outside [0, {original_count})")
++        for key in per_sample_keys:
++            data[key].append(copy.deepcopy(data[key][source]))
++
++        mask = data["loss_masks"][-1]
++        data["loss_masks"][-1] = (
++            [0 for _ in mask] if isinstance(mask, list) else mask * 0
++        )
++        for key in ("rewards", "raw_reward"):
++            if key in data and isinstance(data[key], list):
++                data[key][-1] = 0.0
++        if "truncated" in data:
++            data["truncated"][-1] = 0
++        if "sample_indices" in data:
++            data["sample_indices"][-1] = next_padding_index
++            next_padding_index -= 1
++
++    data["dp_alignment_padding_count"] = len(sources)
++
++
+ def build_dp_schedule(
+     args: Any,
+     train_parallel_config: dict,
+@@ -86,6 +196,7 @@ def build_dp_schedule(
+     *,
+     global_batch_size: int,
+     rollout_indices: list[int],
++    allow_partial_final_step: bool = False,
+ ) -> tuple[list[list[int]], list[list[list[int]]], list[int], list[int]]:
+     """Compute the per-rank DP partition and micro-batch schedule.
+ 
+@@ -98,16 +209,17 @@ def build_dp_schedule(
+             "microbatch_group_size_per_vp_stage"}``.
+         total_lengths: token count per sample, indexed globally.
+         global_batch_size: number of rollouts (NOT training samples) per
+-            training step. Number of training steps =
+-            ``num_rollouts // global_batch_size``; trailing rollouts whose
+-            samples don't fit are dropped.
++            training step. By default, number of training steps is
++            ``num_rollouts // global_batch_size`` and trailing rollouts are
++            dropped. With ``allow_partial_final_step=True``, one non-empty
++            trailing step is retained and normalized by its actual rollout
++            count.
+         rollout_indices: rollout id for each sample (``samples[i].index``).
+             Samples sharing the same id are kept together in one step.
+ 
+     Returns:
+         ``(partitions, micro_batch_indices, num_microbatches, global_batch_sizes)``.
+-        ``global_batch_sizes[s]`` = rollout count for step s (constant
+-        ``global_batch_size`` for every step).
++        ``global_batch_sizes[s]`` = actual rollout count for step s.
+     """
+     dp_size = train_parallel_config["dp_size"]
+     cp_size = train_parallel_config["cp_size"]
+@@ -132,7 +244,8 @@ def build_dp_schedule(
+         rollout_id_to_samples.setdefault(rid, []).append(sample_pos)
+     rollout_ids = list(rollout_id_to_samples.keys())
+ 
+-    num_steps = len(rollout_ids) // global_batch_size
++    num_full_steps, remainder = divmod(len(rollout_ids), global_batch_size)
++    num_steps = num_full_steps + int(allow_partial_final_step and remainder > 0)
+     assert num_steps >= 1, (
+         f"num_rollouts ({len(rollout_ids)}) < global_batch_size ({global_batch_size}); "
+         f"need at least one rollout per step."
+@@ -147,7 +260,8 @@ def build_dp_schedule(
+         step_rollouts = rollout_ids[step_i * global_batch_size : (step_i + 1) * global_batch_size]
+         sample_indices = [pos for rid in step_rollouts for pos in rollout_id_to_samples[rid]]
+         step_lengths = [total_lengths[i] for i in sample_indices]
+-        global_batch_sizes.append(global_batch_size)
++        effective_global_batch_size = len(step_rollouts)
++        global_batch_sizes.append(effective_global_batch_size)
+         assert len(sample_indices) >= dp_size, (
+             f"step {step_i}: {len(sample_indices)} samples < dp_size {dp_size}; "
+             f"each step needs at least one sample per rank."
+diff --git a/slime/utils/http_utils.py b/slime/utils/http_utils.py
+index b8c3a30..2d8b430 100644
+--- a/slime/utils/http_utils.py
++++ b/slime/utils/http_utils.py
+@@ -210,6 +210,21 @@ def get_rollout_num_engines(args) -> int:
+     return max(1, rollout_num_gpus // rollout_num_gpus_per_engine)
+ 
+ 
++def get_rollout_trajectory_concurrency(args) -> int:
++    """Return the whole-trajectory cap independently from HTTP server tuning."""
++    default = args.sglang_server_concurrency * get_rollout_num_engines(args)
++    raw = os.environ.get("DRESSAGE_ROLLOUT_TRAJECTORY_CONCURRENCY")
++    if raw in (None, ""):
++        return default
++    value = int(raw)
++    if value <= 0:
++        raise ValueError(
++            "DRESSAGE_ROLLOUT_TRAJECTORY_CONCURRENCY must be positive, "
++            f"got {value}"
++        )
++    return value
++
++
+ def init_http_client(args):
+     """Initialize HTTP client and optionally enable distributed POST via Ray."""
+     global _http_client, _client_concurrency, _distributed_post_enabled
+diff --git a/tools/convert_torch_dist_to_hf.py b/tools/convert_torch_dist_to_hf.py
+index 8049d77..208f4c2 100644
+--- a/tools/convert_torch_dist_to_hf.py
++++ b/tools/convert_torch_dist_to_hf.py
+@@ -125,12 +125,17 @@ def save_tensors(args, model_name, state_dict, output_dir, chunk_size, vocab_siz
+             current_size += tensor_size
+             total_size += tensor_size
+ 
++    trained_names = sorted(converted_names)
++    added_names = []
+     if origin_hf_dir is not None:
+         safetensors_files = [f for f in os.listdir(origin_hf_dir) if f.endswith(".safetensors")]
+         for filename in safetensors_files:
+             with safetensors.safe_open(os.path.join(origin_hf_dir, filename), framework="pt", device="cpu") as f:
+                 for k in f.keys():
+                     if k not in converted_names:
++                        if os.environ.get('HAPT_STRICT_EXPORT_TEXT') == '1' and (k.startswith('model.language_model.') or k == 'lm_head.weight'):
++                            raise ValueError(f'trained text parameter missing from exported checkpoint: {k}')
++                        added_names.append(k)
+                         converted_name = k
+                         print(f"add {k} from origin hf checkpoint")
+                         converted_param = f.get_tensor(k)
+@@ -141,8 +146,10 @@ def save_tensors(args, model_name, state_dict, output_dir, chunk_size, vocab_siz
+                             current_size = 0
+                         modeltensors[-1][converted_name] = converted_param
+                         current_size += tensor_size
+-                    total_size += tensor_size
++                        total_size += tensor_size
+ 
++    with open(os.path.join(output_dir, "export-parameter-provenance.json"), "w") as handle:
++        json.dump({"trained_names": trained_names, "added_from_origin": added_names}, handle, indent=2)
+     metadata = {"metadata": {"total_size": total_size}, "weight_map": {}}
+ 
+     num_files = len(modeltensors)
