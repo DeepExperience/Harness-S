@@ -9,7 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="#overview">Overview</a> · <a href="#installation">Installation</a> ·
+  <a href="#overview">Overview</a> · <a href="#harness-evolution">Harness Evolution</a> ·
+  <a href="#installation">Installation</a> ·
   <a href="#quick-start">Quick Start</a> · <a href="#harness-pool">Harness Pool</a> ·
   <a href="docs/reproduction.md">Reproduction</a> · <a href="docs/architecture.md">Architecture</a>
 </p>
@@ -18,18 +19,11 @@
 
 **Harness-S** trains one agent policy using complementary trajectories from a fixed sibling harness pool. When every base-harness attempt fails, a validation-based rule selects auxiliary harnesses for fresh attempts. GRPO learns from the replacement group in each trajectory's own generating context. The trained policy can execute under the original harness or use task-specific routing at inference.
 
-```mermaid
-flowchart LR
-    A[Fixed sibling pool] --> R[Rule-based selection]
-    T[Training task] --> H[8 attempts under H0]
-    H -->|Any success| G[Retained GRPO group]
-    H -->|All fail| R
-    R --> S[8 siblings · 1 fresh attempt each]
-    S --> G
-    G --> P[One shared policy]
-    V[Validation trajectories] --> B[Success rates on similar tasks]
-    B --> R
-```
+[![Harness-S framework: directional harness evolution, complementary rescue training, and knowledge transfer to a shared policy.](docs/figures/method_framework_text.png)](docs/figures/method_framework_text.pdf)
+
+**Harness-S framework.** Directional evolution builds a reusable sibling pool; fresh sibling rollouts rescue all-failure tasks and train one shared policy; learned behaviors transfer back to the original harness H0, with optional Rank-1 routing at inference. Click the figure for the original PDF.
+
+The figure shows the paper's full method, including behavior profiles and LLM voting. The public recipes default to validation-based rules with profile calibration disabled; the model-based path is [optional](docs/reproduction.md#optional-llm-routing-and-profiles).
 
 This first release focuses on **AppWorld**: the frozen 20-member pool, exact task partitions, portable execution assets, rule-based rescue, optional behavior profiling and voting router, training scripts and evaluation scripts. Plain GRPO, H0 rescue and Harness-S share the same sampler, scorer, optimizer, validation and checkpoint lifecycle. Offline harness search has already produced the included pool; regenerating that search is outside this release's launch commands.
 
@@ -41,6 +35,20 @@ This first release focuses on **AppWorld**: the frozen 20-member pool, exact tas
 - **One training path:** established Dressage/Slime backend, policy-token masks, token importance correction, and **no reference-model KL**.
 - **Portable recipes:** explicit environment variables, single seed, 32 concurrent tasks and one GPU per inference instance by default.
 - **Limited checkpoints:** keep the validation-best and latest restart point during training; best and final after completion.
+
+## Harness Evolution
+
+Sibling harnesses start from a common H0 and share the same execution foundation. They vary the prompts, skills, context, memory, hooks, and tool views that support the policy. The paper identifies three properties of this evolution:
+
+[![Properties of harness evolution on AppWorld: local repairs can introduce regressions, siblings solve complementary tasks, and their utility changes across policy checkpoints.](docs/figures/introduction.png)](docs/figures/introduction.pdf)
+
+**Properties of harness evolution (Qwen3.5-4B, AppWorld).** Left: repaired and regressed tasks relative to H0. Middle: individual success, sibling oracle union coverage, and H0 pass@K at matched rollout counts. Right: paired outcomes for fixed harnesses as the policy learns. Click the figure for the original PDF.
+
+- **Locality:** a harness edit can repair some failures while introducing regressions on previously solved tasks. Different repair directions develop different strengths.
+- **Complementarity:** siblings recover one another's errors. Their oracle union covers more tasks than individual variants or repeated H0 sampling at the same rollout count; this measures the pool's potential coverage, while a router must select harnesses before observing outcomes.
+- **Nonstationarity:** a fixed harness's benefit changes with the policy. An advantage over H0 can turn into a disadvantage, and sibling rankings can reverse across checkpoints.
+
+**Directional Harness Evolution** diagnoses failure causes and branches into targeted repairs. Joint validation coverage selects the next parents, while every executable, protocol-compliant child is retained in the pool. Rescue training uses that fixed pool to explore alternative behaviors on failed tasks and transfer them into the policy. This release includes the resulting AppWorld pool; rerunning the offline evolution search is outside its launch commands.
 
 ## Installation
 
@@ -121,14 +129,14 @@ The paper describes a 20-member routing pool. Some historical training runs used
 
 Task IDs are disjoint; sibling variants can share task families across partitions. The paper's main-table averages over three independent runs are distinct from this repository's default single-run launch.
 
-This extraction has CPU contract tests and release checks. **The portable G
-PU launcher has not yet completed an end-to-end training run.** Its defaults also change inference placement to one GPU per engine; historical runs often used two. Do not treat this release as a bitwise replay or a fresh confirmation of the reported scores. See [the implementation mapping and remaining validation](docs/reproduction.md).
+This extraction has CPU contract tests and release checks. **The portable GPU launcher has not yet completed an end-to-end training run.** Its defaults also change inference placement to one GPU per engine; historical runs often used two. Do not treat this release as a bitwise replay or a fresh confirmation of the reported scores. See [the implementation mapping and remaining validation](docs/reproduction.md).
 
 ## Repository Layout
 
 ```text
 configs/appworld/        # 4B / 9B recipes for all three training variants
 data/appworld/           # Frozen task IDs, order and family assignments
+docs/figures/            # Paper figures: original PDFs and README PNG previews
 harness_pool/appworld/   # Public H0 + 19 sibling implementations
 src/harness_s/           # Shared orchestration, routing and AppWorld adapter
 runtime/appworld/        # Fixed DSH composition, components and MCP replay
