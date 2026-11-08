@@ -159,4 +159,16 @@ The execution and learning backend builds on [Dressage](https://github.com/Accio
 
 ## Citation
 
-The manuscript is titled *Harness-S: Learning from Sibling Harnesses for Generalizable Agent Training*. A verified public paper identifier and complete BibTeX entry will be added with the paper release.
+If you use Harness-S in your research, please cite our [paper](https://arxiv.org/abs/2611.04277):
+
+```bibtex
+@misc{zhang2026harnesss,
+  title         = {{Harness-S}: Learning from Sibling Harnesses for Generalizable Agent Training},
+  author        = {Kangning Zhang and Wenxiang Jiao and Bowen Fang and Shuai Shao and Jiachen Zhu and Rong Shan and Shijian Wang and Hao Wang and Yuan Lu and Weiwen Liu and Weinan Zhang},
+  year          = {2026},
+  eprint        = {2611.04277},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2611.04277}
+}
+```
